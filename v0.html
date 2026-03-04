@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArbitrumDAO Quest Board</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --arb-blue:      #28A0F0;
+      --arb-blue-dim:  #1a6fab;
+      --arb-blue-glow: rgba(40,160,240,0.25);
+      --bg-deep:       #0d1117;
+      --bg-card:       #161b22;
+      --bg-card-hover: #1c2430;
+      --bg-expanded:   #111820;
+      --border:        rgba(40,160,240,0.18);
+      --border-bright: rgba(40,160,240,0.55);
+      --text-primary:  #e6edf3;
+      --text-muted:    #8b949e;
+      --text-dim:      #484f58;
+      --gold:          #f0c040;
+      --green:         #3fb950;
+      --green-dim:     rgba(63,185,80,0.18);
+      --orange:        #f08d28;
+      --red:           #f85149;
+      --radius:        12px;
+      --radius-sm:     8px;
+      --transition:    0.22s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Animated background grid ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(40,160,240,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(40,160,240,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout wrapper ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--arb-blue) 0%, #1a6fab 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 0 20px var(--arb-blue-glow);
+      flex-shrink: 0;
+    }
+
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #e6edf3 0%, var(--arb-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.3px;
+    }
+
+    .site-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .date-badge {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      white-space: nowrap;
+    }
+
+    /* ── Progress section ── */
+    .progress-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 28px 0 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-section::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--arb-blue), #1a6fab);
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .progress-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .progress-count {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--arb-blue);
+      line-height: 1;
+    }
+
+    .progress-count span {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .xp-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(240,192,64,0.12);
+      border: 1px solid rgba(240,192,64,0.3);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .xp-icon { font-size: 1rem; }
+
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--arb-blue) 0%, #1a6fab 100%);
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px var(--arb-blue-glow);
+      width: 0%;
+    }
+
+    .progress-milestones {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .milestone {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      transition: var(--transition);
+    }
+
+    .milestone.achieved {
+      color: var(--green);
+      border-color: rgba(63,185,80,0.4);
+      background: var(--green-dim);
+    }
+
+    .milestone-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+
+    /* ── Quest cards ── */
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .quest-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .quest-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 0 24px rgba(40,160,240,0.08);
+    }
+
+    .quest-card.completed {
+      border-color: rgba(63,185,80,0.35);
+      opacity: 0.75;
+    }
+
+    .quest-card.completed:hover {
+      opacity: 0.9;
+    }
+
+    /* ── Card header row ── */
+    .quest-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background var(--transition);
+    }
+
+    .quest-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .quest-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .quest-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .quest-category {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .quest-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .quest-card.completed .quest-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .quest-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .xp-chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(240,192,64,0.1);
+      border: 1px solid rgba(240,192,64,0.25);
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+
+    .expand-arrow {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      transition: transform var(--transition), color var(--transition);
+    }
+
+    .quest-card.open .expand-arrow {
+      transform: rotate(180deg);
+      color: var(--arb-blue);
+    }
+
+    /* ── Checkmark indicator ── */
+    .check-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: transparent;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .quest-card.completed .check-indicator {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    /* ── Expanded body ── */
+    .quest-body {
+      display: none;
+      padding: 0 18px 18px;
+      background: var(--bg-expanded);
+      border-top: 1px solid var(--border);
+    }
+
+    .quest-card.open .quest-body {
+      display: block;
+    }
+
+    .quest-body-inner {
+      padding-top: 16px;
+    }
+
+    .quest-description {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+
+    .quest-details {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .quest-details li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .quest-details li::before {
+      content: '›';
+      color: var(--arb-blue);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: -1px;
+      flex-shrink: 0;
+    }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.77rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+    }
+
+    .stat-chip .stat-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .stat-chip.vote-for  { color: var(--green);  border-color: rgba(63,185,80,0.3);  background: rgba(63,185,80,0.08); }
+    .stat-chip.vote-against { color: var(--red); border-color: rgba(248,81,73,0.3); background: rgba(248,81,73,0.08); }
+    .stat-chip.vote-quorum  { color: var(--orange); border-color: rgba(240,141,40,0.3); background: rgba(240,141,40,0.08); }
+    .stat-chip.vote-for .stat-dot { background: var(--green); }
+    .stat-chip.vote-against .stat-dot { background: var(--red); }
+    .stat-chip.vote-quorum .stat-dot { background: var(--orange); }
+
+    /* ── Action row ── */
+    .quest-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-primary {
+      background: var(--arb-blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #3bb5ff;
+      box-shadow: 0 0 16px var(--arb-blue-glow);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--arb-blue);
+      border: 1px solid var(--border-bright);
+    }
+
+    .btn-outline:hover {
+      background: var(--arb-blue-glow);
+    }
+
+    .btn-success {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #50d460;
+      box-shadow: 0 0 16px rgba(63,185,80,0.3);
+    }
+
+    .btn-done {
+      background: rgba(63,185,80,0.12);
+      color: var(--green);
+      border: 1px solid rgba(63,185,80,0.35);
+      cursor: default;
+    }
+
+    /* ── Divider ── */
+    .quest-list + .section-label {
+      margin-top: 32px;
+    }
+
+    /* ── Sub-quest (nested items) ── */
+    .sub-quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .sub-quest-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .sub-quest-card:hover {
+      border-color: var(--border-bright);
+    }
+
+    .sub-quest-card.completed {
+      border-color: rgba(63,185,80,0.35);
+      opacity: 0.7;
+    }
+
+    .sub-quest-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background var(--transition);
+    }
+
+    .sub-quest-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .sub-quest-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: center;
+    }
+
+    .sub-quest-meta { flex: 1; min-width: 0; }
+
+    .sub-quest-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .sub-quest-card.completed .sub-quest-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .sub-quest-body {
+      display: none;
+      padding: 0 16px 14px;
+      background: var(--bg-expanded);
+      border-top: 1px solid var(--border);
+    }
+
+    .sub-quest-card.open .sub-quest-body {
+      display: block;
+    }
+
+    .sub-quest-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sub-quest-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--green);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--green);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ── Completion banner ── */
+    .completion-banner {
+      display: none;
+      text-align: center;
+      padding: 32px 24px;
+      background: linear-gradient(135deg, rgba(63,185,80,0.08) 0%, rgba(40,160,240,0.08) 100%);
+      border: 1px solid rgba(63,185,80,0.35);
+      border-radius: var(--radius);
+      margin-top: 32px;
+    }
+
+    .completion-banner.visible { display: block; }
+
+    .completion-emoji { font-size: 3rem; margin-bottom: 12px; }
+
+    .completion-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--green), var(--arb-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .completion-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Live badge ── */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--red);
+      background: rgba(248,81,73,0.12);
+      border: 1px solid rgba(248,81,73,0.35);
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+
+    .live-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* ── New badge ── */
+    .new-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--arb-blue);
+      background: rgba(40,160,240,0.12);
+      border: 1px solid rgba(40,160,240,0.3);
+      border-radius: 20px;
+      padding: 2px 8px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 560px) {
+      .page { padding: 24px 14px 60px; }
+      .site-header { gap: 10px; }
+      .site-title { font-size: 1.2rem; }
+      .date-badge { display: none; }
+      .progress-section { padding: 18px; }
+      .progress-count { font-size: 1.6rem; }
+      .quest-header { padding: 14px; }
+      .quest-body { padding: 0 14px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── Site Header ── -->
+  <header class="site-header">
+    <div class="logo">A</div>
+    <div>
+      <div class="site-title">ArbitrumDAO Quest Board</div>
+      <div class="site-subtitle">Weekly Governance Digest</div>
+    </div>
+    <div class="date-badge">📅 Week of Mar 4, 2026</div>
+  </header>
+
+  <!-- ── Progress Section ── -->
+  <section class="progress-section">
+    <div class="progress-header">
+      <div>
+        <div class="progress-title">Your Progress</div>
+        <div class="progress-count" id="progress-count">
+          0 <span>/ <span id="total-count">8</span> quests read</span>
+        </div>
+      </div>
+      <div class="xp-badge">
+        <span class="xp-icon">⚡</span>
+        <span id="xp-count">0</span> XP earned
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="progress-milestones">
+      <div class="milestone" id="m-1" data-threshold="1">
+        <div class="milestone-dot"></div> First read
+      </div>
+      <div class="milestone" id="m-3" data-threshold="3">
+        <div class="milestone-dot"></div> Halfway there
+      </div>
+      <div class="milestone" id="m-5" data-threshold="5">
+        <div class="milestone-dot"></div> Governance nerd
+      </div>
+      <div class="milestone" id="m-8" data-threshold="8">
+        <div class="milestone-dot"></div> DAO Champion 🏆
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ ACTIVE VOTES ════════════ -->
+  <div class="section-label">🗳️ Active Votes</div>
+  <div class="quest-list" id="vote-quests">
+
+    <!-- Quest 1: DVP Quorum -->
+    <div class="quest-card" data-id="dvp-quorum" data-xp="30">
+      <div class="quest-header" onclick="toggleCard(this)">
+        <div class="quest-icon" style="background:rgba(248,81,73,0.12)">🗳️</div>
+        <div class="quest-meta">
+          <div class="quest-category" style="color:var(--red)">
+            On-Chain Vote
+            <span class="live-badge" style="margin-left:6px"><span class="live-dot"></span>Live</span>
+          </div>
+          <div class="quest-title">DVP Quorum &amp; Proposal Cancellation Upgrade</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+30 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="quest-body">
+        <div class="quest-body-inner">
+          <p class="quest-description">
+            A bundled upgrade proposing two changes to ArbitrumDAO's governance mechanics:
+            improvements to quorum computation logic and a new ability to cancel proposals
+            during the 3-day pre-vote window. Voting is open now through March 12th.
+          </p>
+          <ul class="quest-details">
+            <li>New quorum computation logic makes vote thresholds more predictable and fair</li>
+            <li>Proposal cancellation window gives the DAO a safety valve against bad actors or errors</li>
+            <li>Voting began Thursday and closes March 12th — your vote matters!</li>
+          </ul>
+          <div class="stats-row">
+            <div class="stat-chip vote-for"><span class="stat-dot"></span> For: 56.55m ARB</div>
+            <div class="stat-chip vote-against"><span class="stat-dot"></span> Against: 336k ARB</div>
+            <div class="stat-chip vote-quorum"><span class="stat-dot"></span> Quorum: 218.85m ARB needed</div>
+          </div>
+          <div class="quest-actions">
+            <a class="btn btn-primary" href="https://www.tally.xyz/gov/arbitrum" target="_blank" rel="noopener">
+              🗳️ Vote on Tally
+            </a>
+            <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">
+              ✓ Mark as Read
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════ FORUM DISCUSSIONS ════════════ -->
+  <div class="section-label">💬 Forum Discussions</div>
+  <div class="quest-list" id="forum-quests">
+
+    <!-- Quest 2: Automate Consolidation -->
+    <div class="quest-card" data-id="automate-funds" data-xp="20">
+      <div class="quest-header" onclick="toggleCard(this)">
+        <div class="quest-icon" style="background:rgba(40,160,240,0.12)">💰</div>
+        <div class="quest-meta">
+          <div class="quest-category" style="color:var(--arb-blue)">
+            Treasury Proposal
+            <span class="new-badge" style="margin-left:6px">Temperature Check Soon</span>
+          </div>
+          <div class="quest-title">Automate Consolidation of Idle Funds into Treasury Portfolio</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+20 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="quest-body">
+        <div class="quest-body-inner">
+          <p class="quest-description">
+            Entropy Advisors proposes automating the flow of surplus and idle non-ARB funds
+            from DAO programs into the Arbitrum Treasury Management Committee (ATMC) portfolio —
+            putting idle capital to work generating yield instead of sitting dormant.
+          </p>
+          <ul class="quest-details">
+            <li>Currently the DDA V2 Program and D.A.O. Grant Program hold significant idle funds</li>
+            <li>Funds would move to AF-chosen wallets immediately when feasible</li>
+            <li>Each new ATMC deployment using consolidated funds requires OAT approval</li>
+            <li>Temperature check expected this week — engage on the forum now!</li>
+          </ul>
+          <div class="quest-actions">
+            <a class="btn btn-primary" href="https://forum.arbitrum.foundation" target="_blank" rel="noopener">
+              💬 Join Forum Discussion
+            </a>
+            <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">
+              ✓ Mark as Read
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════ OTHER UPDATES ════════════ -->
+  <div class="section-label">📰 Other Updates</div>
+  <div class="sub-quest-list" id="other-quests">
+
+    <!-- Sub-quest: Governance Call -->
+    <div class="sub-quest-card" data-id="gov-call" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">🎙️</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">Open Discussion of Proposals — Governance Call (Today!)</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <span class="live-badge"><span class="live-dot"></span>Today</span>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          The regular open governance call is happening tomorrow. A great opportunity to hear from delegates,
+          ask questions, and participate in live discussion of active proposals. Dial in or catch the recording.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-quest: Firestarters -->
+    <div class="sub-quest-card" data-id="firestarters" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">🔥</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">Firestarters Grant: February Update</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          The Firestarters grant program has posted its February update. Check in on milestone
+          progress, deliverables completed, and what's coming next for this initiative.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-quest: RAD -->
+    <div class="sub-quest-card" data-id="rad-update" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">🏅</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">Rewarding Active Delegates (RAD): February Update</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          The RAD program recognizes and rewards delegates for their active participation in
+          governance. February's update tracks which delegates met their participation thresholds
+          and what rewards are being distributed.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-quest: Timeboost -->
+    <div class="sub-quest-card" data-id="timeboost" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">⚡</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">Timeboost Reserve Price Reverted to 0.001 ETH</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          Offchain Labs is reverting the Timeboost reserve price from 0.0075 ETH back to the
+          original 0.001 ETH. This reverses a change made last week, restoring the original
+          pricing for the Timeboost sequencer priority mechanism.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-quest: Native Precompile -->
+    <div class="sub-quest-card" data-id="precompile" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">🔧</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">[Grantee Report] Arbitrum Native Precompile &amp; Tx-Type Support for Local Testing</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          A maintenance update from the grantee working on Arbitrum-native precompile and
+          transaction-type support for local testing environments. Improves developer experience
+          when building and testing Arbitrum-specific features locally.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-quest: ChainCraft -->
+    <div class="sub-quest-card" data-id="chaincraft" data-xp="10">
+      <div class="sub-quest-header" onclick="toggleSubCard(this)">
+        <div class="sub-quest-icon">🎮</div>
+        <div class="sub-quest-meta">
+          <div class="sub-quest-title">[Grantee Report] ChainCraft: AI-Powered Game Creation</div>
+        </div>
+        <div class="quest-right">
+          <div class="check-indicator">✓</div>
+          <div class="xp-chip">+10 XP</div>
+          <div class="expand-arrow">▼</div>
+        </div>
+      </div>
+      <div class="sub-quest-body">
+        <p class="sub-quest-desc">
+          ChainCraft is building an AI-powered game creation platform on Arbitrum, lowering the
+          barrier to entry for game developers to ship on-chain games. This report covers their
+          latest progress and upcoming milestones.
+        </p>
+        <div class="sub-quest-actions">
+          <button class="btn btn-outline mark-read-btn" onclick="markRead(this)">✓ Mark as Read</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Completion banner -->
+  <div class="completion-banner" id="completion-banner">
+    <div class="completion-emoji">🏆</div>
+    <div class="completion-title">DAO Champion Unlocked!</div>
+    <p class="completion-text">You've read all governance updates this week. The DAO is stronger because you're engaged.</p>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Quest completed!</span>
+</div>
+
+<script>
+  // ── State ──
+  const readSet = new Set();
+  const XP_PER_QUEST = {};
+  let totalQuests = 0;
+
+  // ── Init: count quests & build XP map ──
+  document.addEventListener('DOMContentLoaded', () => {
+    const allCards = document.querySelectorAll('[data-id]');
+    totalQuests = allCards.length;
+    document.getElementById('total-count').textContent = totalQuests;
+
+    allCards.forEach(card => {
+      XP_PER_QUEST[card.dataset.id] = parseInt(card.dataset.xp) || 10;
+    });
+  });
+
+  // ── Toggle main quest card ──
+  function toggleCard(header) {
+    const card = header.closest('.quest-card');
+    card.classList.toggle('open');
+  }
+
+  // ── Toggle sub quest card ──
+  function toggleSubCard(header) {
+    const card = header.closest('.sub-quest-card');
+    card.classList.toggle('open');
+  }
+
+  // ── Mark as read ──
+  function markRead(btn) {
+    const card = btn.closest('[data-id]');
+    if (!card) return;
+
+    const id = card.dataset.id;
+    if (readSet.has(id)) return; // already done
+
+    readSet.add(id);
+
+    // Visual: mark card completed
+    card.classList.add('completed');
+
+    // Swap button to "done" state
+    btn.textContent = '✓ Read';
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-done');
+    btn.disabled = true;
+
+    // Close the card after a brief moment
+    setTimeout(() => {
+      card.classList.remove('open');
+    }, 400);
+
+    // Update progress
+    updateProgress();
+
+    // Toast
+    const xp = XP_PER_QUEST[id] || 10;
+    showToast(`+${xp} XP — Quest marked as read!`);
+  }
+
+  // ── Update progress bar and counters ──
+  function updateProgress() {
+    const done = readSet.size;
+    const total = totalQuests;
+    const pct = total > 0 ? (done / total) * 100 : 0;
+    const xpTotal = [...readSet].reduce((sum, id) => sum + (XP_PER_QUEST[id] || 10), 0);
+
+    document.getElementById('progress-count').innerHTML =
+      `${done} <span>/ ${total} quests read</span>`;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('xp-count').textContent = xpTotal;
+
+    // Milestones
+    const thresholds = { 'm-1': 1, 'm-3': Math.ceil(total / 2), 'm-5': Math.ceil(total * 0.75), 'm-8': total };
+    Object.entries(thresholds).forEach(([id, threshold]) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('achieved', done >= threshold);
+    });
+
+    // Completion banner
+    if (done >= total) {
+      document.getElementById('completion-banner').classList.add('visible');
+      document.getElementById('completion-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  // ── Toast ──
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 2800);
+  }
+</script>
+</body>
+</html>
