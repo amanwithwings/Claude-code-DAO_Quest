@@ -119,6 +119,16 @@ export function SubQuestCard({ quest, isRead, onMarkRead }) {
       <div className="sub-quest-body">
         <p className="sub-quest-desc">{quest.description}</p>
         <div className="sub-quest-actions">
+          {quest.link && (
+            <a
+              className="btn btn-ghost btn-sm"
+              href={quest.link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {quest.link.label}
+            </a>
+          )}
           {isRead ? (
             <button className="btn btn-done" disabled>✓ Read</button>
           ) : (
