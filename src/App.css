@@ -627,6 +627,28 @@ body::before {
 
 .toast.visible { transform: translateY(0); opacity: 1; }
 
+.toast-error {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ── Local-only notice ────────────────────────────────────────────────────── */
+.local-only-notice {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: rgba(240,141,40,0.07);
+  border: 1px solid rgba(240,141,40,0.25);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  margin: 12px 0;
+}
+
+.local-only-notice code {
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--orange);
+}
+
 /* ── Completion banner ────────────────────────────────────────────────────── */
 .completion-banner {
   text-align: center;

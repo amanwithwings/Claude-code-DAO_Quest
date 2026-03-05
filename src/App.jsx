@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
 import { ConnectButton }                             from '@rainbow-me/rainbowkit';
 import { ALL_QUESTS, QUEST_SECTIONS }                from './data/quests';
-import { loadProgress, saveProgress }               from './lib/supabase';
+import { loadProgress, saveProgress, isSupabaseConfigured } from './lib/supabase';
 import { ProgressSection }                           from './components/ProgressSection';
 import { QuestCard, SubQuestCard }                   from './components/QuestCard';
 
@@ -56,10 +56,10 @@ function WalletArea({ address, isSigned, onSign, signing }) {
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
-function Toast({ msg }) {
+function Toast({ msg, isError }) {
   return (
-    <div className={`toast ${msg ? 'visible' : ''}`}>
-      <span>✓</span> {msg}
+    <div className={`toast ${msg ? 'visible' : ''} ${isError ? 'toast-error' : ''}`}>
+      <span>{isError ? '⚠️' : '✓'}</span> {msg}
     </div>
   );
 }
@@ -83,12 +83,35 @@ export default function App() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync }     = useSignMessage();
 
-  const [isSigned,  setIsSigned]  = useState(false);
-  const [signing,   setSigning]   = useState(false);
-  const [readSet,   setReadSet]   = useState(new Set());
-  const [loading,   setLoading]   = useState(false);
-  const [toastMsg,  setToastMsg]  = useState('');
-  const toastTimer                = useRef(null);
+  const [isSigned,   setIsSigned]  = useState(false);
+  const [signing,    setSigning]   = useState(false);
+  const [readSet,    setReadSet]   = useState(new Set());
+  const [loading,    setLoading]   = useState(false);
+  const [toastMsg,   setToastMsg]  = useState('');
+  const [toastError, setToastError] = useState(false);
+  const toastTimer                 = useRef(null);
+
+  // ── Shared toast helper ─────────────────────────────────────────────────────
+  const showToast = useCallback((msg, isError = false) => {
+    clearTimeout(toastTimer.current);
+    setToastMsg(msg);
+    setToastError(isError);
+    toastTimer.current = setTimeout(() => setToastMsg(''), isError ? 4000 : 2800);
+  }, []);
+
+  // ── Shared progress-loader (used on sign-in and session restore) ────────────
+  const fetchAndSetProgress = useCallback(async (addr) => {
+    setLoading(true);
+    try {
+      const ids = await loadProgress(addr);
+      setReadSet(new Set(ids));
+    } catch (err) {
+      console.error(err);
+      showToast('Could not load your progress — check Supabase config.', true);
+    } finally {
+      setLoading(false);
+    }
+  }, [showToast]);
 
   // ── Restore session from localStorage on mount / address change ─────────────
   useEffect(() => {
@@ -100,12 +123,9 @@ export default function App() {
     const saved = localStorage.getItem('dao_quest_wallet');
     if (saved === address.toLowerCase()) {
       setIsSigned(true);
-      setLoading(true);
-      loadProgress(address)
-        .then((ids) => setReadSet(new Set(ids)))
-        .finally(() => setLoading(false));
+      fetchAndSetProgress(address);
     }
-  }, [address, isConnected]);
+  }, [address, isConnected, fetchAndSetProgress]);
 
   // ── Sign-in ─────────────────────────────────────────────────────────────────
   const handleSignIn = useCallback(async () => {
@@ -119,35 +139,43 @@ export default function App() {
           `No transaction will be sent.\n\n` +
           `Address: ${address}`,
       });
+      // Persist the verified address so we can skip signing on next visit
       localStorage.setItem('dao_quest_wallet', address.toLowerCase());
       setIsSigned(true);
-      setLoading(true);
-      const ids = await loadProgress(address);
-      setReadSet(new Set(ids));
     } catch (err) {
-      if (err?.code !== 4001) console.error('Sign-in error:', err); // ignore user rejection
-    } finally {
+      // code 4001 = user rejected the signature request — silent
+      if (err?.code !== 4001) {
+        console.error('Sign-in error:', err);
+        showToast('Sign-in failed — please try again.', true);
+      }
       setSigning(false);
-      setLoading(false);
+      return;
     }
-  }, [address, signMessageAsync]);
+    setSigning(false);
+    // Load progress AFTER sign-in succeeds (separate try so a load failure
+    // doesn't roll back the signed-in state)
+    await fetchAndSetProgress(address);
+  }, [address, signMessageAsync, fetchAndSetProgress, showToast]);
 
   // ── Mark quest as read ──────────────────────────────────────────────────────
   const markRead = useCallback(async (questId, xp) => {
+    // Optimistic local update first so the UI feels instant
     setReadSet((prev) => {
       if (prev.has(questId)) return prev;
       return new Set([...prev, questId]);
     });
 
-    if (isSigned && address) {
-      await saveProgress(address, questId);
-    }
+    showToast(`+${xp} XP — quest marked as read!`);
 
-    // Toast
-    clearTimeout(toastTimer.current);
-    setToastMsg(`+${xp} XP — quest marked as read!`);
-    toastTimer.current = setTimeout(() => setToastMsg(''), 2800);
-  }, [isSigned, address]);
+    if (isSigned && address) {
+      try {
+        await saveProgress(address, questId);
+      } catch (err) {
+        console.error(err);
+        showToast('Progress saved locally but failed to sync — will retry on next sign-in.', true);
+      }
+    }
+  }, [isSigned, address, showToast]);
 
   const allDone = readSet.size >= ALL_QUESTS.length;
 
@@ -172,6 +200,14 @@ export default function App() {
       {/* ── Sign-in prompt (shown when connected but not signed) ── */}
       {isConnected && !isSigned && (
         <SignInBanner onSign={handleSignIn} loading={signing} />
+      )}
+
+      {/* ── Local-only notice when Supabase isn't wired up ── */}
+      {!isSupabaseConfigured && (
+        <div className="local-only-notice">
+          💾 <strong>Local mode</strong> — progress is not saved across sessions.
+          Add Supabase credentials to <code>.env</code> to enable persistence.
+        </div>
       )}
 
       {/* ── Progress ── */}
@@ -209,7 +245,7 @@ export default function App() {
       ))}
 
       <CompletionBanner show={allDone} />
-      <Toast msg={toastMsg} />
+      <Toast msg={toastMsg} isError={toastError} />
     </div>
   );
 }
