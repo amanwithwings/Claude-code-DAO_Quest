@@ -189,9 +189,20 @@ export default function App() {
     <div className="page">
       {/* ── Header ── */}
       <header className="site-header">
-        <div className="logo">A</div>
+        <div className="logo" aria-label="Arbitrum">
+          <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Outer hexagon — navy fill, sky blue stroke */}
+            <path d="M20 2L37.3 12V32L20 44L2.7 32V12L20 2Z" fill="#1B2559" stroke="#9DCCED" strokeWidth="1.5"/>
+            {/* Left slash */}
+            <path d="M11.5 33L18 14" stroke="rgba(255,255,255,0.55)" strokeWidth="2.2" strokeLinecap="round"/>
+            {/* Right slash / A shape */}
+            <path d="M14 35L21 13L28 35" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            {/* Crossbar — Electric Blue */}
+            <path d="M17 27H25" stroke="#12AAFF" strokeWidth="2.4" strokeLinecap="round"/>
+          </svg>
+        </div>
         <div className="site-brand">
-          <div className="site-title">ArbitrumDAO Quest Board</div>
+          <div className="site-title">Arbitrum<span className="title-accent">DAO</span> Quest Board</div>
           <div className="site-subtitle">Weekly Governance Digest</div>
         </div>
 
