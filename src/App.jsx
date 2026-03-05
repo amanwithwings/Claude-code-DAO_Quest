@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAccount, useSignMessage }               from 'wagmi';
 import { ConnectButton }                            from '@rainbow-me/rainbowkit';
 
@@ -92,8 +92,23 @@ export default function App() {
   const fetchAndSetProgress = useCallback(async (addr) => {
     setLoading(true);
     try {
-      const ids = await loadProgress(addr);
-      setReadSet(new Set(ids));
+      const rows = await loadProgress(addr); // [{quest_id, xp}]
+      setReadSet(new Set(rows.map((r) => r.quest_id)));
+
+      // Backfill XP for rows saved before the xp column was added (xp === 0).
+      // This fixes leaderboard totals for existing users without any manual step.
+      const staleRows = rows.filter((r) => !r.xp);
+      if (staleRows.length > 0) {
+        const xpMap = Object.fromEntries(
+          WEEKS.flatMap((w) => w.sections.flatMap((s) => s.quests)).map((q) => [q.id, q.xp])
+        );
+        // Fire-and-forget; non-critical so we don't block the UI
+        Promise.all(
+          staleRows
+            .filter((r) => xpMap[r.quest_id] > 0)
+            .map((r) => saveProgress(addr, r.quest_id, xpMap[r.quest_id]))
+        ).catch((err) => console.error('XP backfill error:', err));
+      }
     } catch (err) {
       console.error(err);
       showToast('Could not load your progress — check Supabase config.', true);
@@ -159,9 +174,16 @@ export default function App() {
     }
   }, [isSigned, address, showToast]);
 
-  const selectedWeek = getWeekById(selectedWeekId);
-  const weekQuests   = selectedWeek.sections.flatMap((s) => s.quests);
-  const allDone      = weekQuests.length > 0 && weekQuests.every((q) => readSet.has(q.id));
+  // Stable references — only recompute when the selected week changes, not on
+  // every render (prevents ProgressSection thrashing on every markRead).
+  const weekQuests = useMemo(
+    () => getWeekById(selectedWeekId).sections.flatMap((s) => s.quests),
+    [selectedWeekId]
+  );
+  const allDone = useMemo(
+    () => weekQuests.length > 0 && weekQuests.every((q) => readSet.has(q.id)),
+    [weekQuests, readSet]
+  );
 
   return (
     <div className="page">

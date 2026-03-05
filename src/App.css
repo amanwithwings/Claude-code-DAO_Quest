@@ -788,8 +788,10 @@ body::before {
   transition: var(--transition);
   font-family: inherit;
 }
-.lb-refresh:hover   { color: var(--arb-blue); }
-.lb-refresh:disabled { opacity: 0.4; cursor: default; }
+.lb-refresh:hover            { color: var(--arb-blue); }
+.lb-refresh:disabled         { opacity: 0.4; cursor: default; }
+.lb-refresh-spinning         { animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .lb-body { padding: 6px 0 8px; }
 
