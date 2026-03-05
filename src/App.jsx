@@ -225,7 +225,7 @@ export default function App() {
             <ProgressSection readSet={readSet} weekQuests={weekQuests} />
           )}
 
-          {selectedWeek.sections.map((section) => (
+          {getWeekById(selectedWeekId).sections.map((section) => (
             <div key={section.id}>
               <div className="section-label">{section.label}</div>
               <div className={section.id === 'other' ? 'sub-quest-list' : 'quest-list'}>
