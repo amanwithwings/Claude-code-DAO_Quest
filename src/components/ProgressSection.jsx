@@ -1,19 +1,18 @@
-import { ALL_QUESTS, TOTAL_XP } from '../data/quests';
-
 const MILESTONES = [
-  { id: 'm1', threshold: 1,                          label: 'First read' },
-  { id: 'm2', threshold: (n) => Math.ceil(n / 2),    label: 'Halfway there' },
-  { id: 'm3', threshold: (n) => Math.ceil(n * 0.75), label: 'Governance nerd' },
-  { id: 'm4', threshold: (n) => n,                   label: 'DAO Champion 🏆' },
+  { id: 'm1', pct: 0.01, label: 'First read' },
+  { id: 'm2', pct: 0.50, label: 'Halfway there' },
+  { id: 'm3', pct: 0.75, label: 'Governance nerd' },
+  { id: 'm4', pct: 1.00, label: 'DAO Champion 🏆' },
 ];
 
-export function ProgressSection({ readSet }) {
-  const total   = ALL_QUESTS.length;
-  const done    = readSet.size;
-  const pct     = total > 0 ? (done / total) * 100 : 0;
-  const xpEarned = ALL_QUESTS
+export function ProgressSection({ readSet, weekQuests }) {
+  const total    = weekQuests.length;
+  const done     = weekQuests.filter((q) => readSet.has(q.id)).length;
+  const pct      = total > 0 ? done / total : 0;
+  const xpEarned = weekQuests
     .filter((q) => readSet.has(q.id))
     .reduce((sum, q) => sum + q.xp, 0);
+  const xpTotal  = weekQuests.reduce((sum, q) => sum + q.xp, 0);
 
   return (
     <section className="progress-section">
@@ -26,24 +25,21 @@ export function ProgressSection({ readSet }) {
         </div>
         <div className="xp-badge">
           <span className="xp-icon">⚡</span>
-          {xpEarned} <span style={{ fontWeight: 400 }}>/ {TOTAL_XP} XP</span>
+          {xpEarned} <span style={{ fontWeight: 400 }}>/ {xpTotal} XP</span>
         </div>
       </div>
 
       <div className="progress-bar-wrap">
-        <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+        <div className="progress-bar-fill" style={{ width: `${pct * 100}%` }} />
       </div>
 
       <div className="progress-milestones">
-        {MILESTONES.map((m) => {
-          const thresh = typeof m.threshold === 'function' ? m.threshold(total) : m.threshold;
-          return (
-            <div key={m.id} className={`milestone ${done >= thresh ? 'achieved' : ''}`}>
-              <div className="milestone-dot" />
-              {m.label}
-            </div>
-          );
-        })}
+        {MILESTONES.map((m) => (
+          <div key={m.id} className={`milestone ${pct >= m.pct ? 'achieved' : ''}`}>
+            <div className="milestone-dot" />
+            {m.label}
+          </div>
+        ))}
       </div>
     </section>
   );
