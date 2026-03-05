@@ -5,48 +5,83 @@ const supabaseAnon = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnon);
 
-// When env vars are missing we return a properly-chainable stub so the app
-// still runs in local-only mode without throwing TypeErrors.
 function makeClient() {
-  if (isSupabaseConfigured) {
-    return createClient(supabaseUrl, supabaseAnon);
-  }
-  // Stub that mirrors the exact chains used by this app:
-  //   from().select().eq()   → { data: [], error: null }
-  //   from().upsert()        → { data: [], error: null }
+  if (isSupabaseConfigured) return createClient(supabaseUrl, supabaseAnon);
+
+  // Stub for local-only mode.
+  // select() returns a Promise (so it's directly await-able) that also has
+  // an .eq() method (so select().eq() chains work too).
+  const emptyResult = { data: [], error: null };
+  const makeSelectResult = () => {
+    const p = Promise.resolve(emptyResult);
+    p.eq = async () => emptyResult;
+    return p;
+  };
   return {
     from: () => ({
-      select: () => ({
-        eq: async () => ({ data: [], error: null }),
-      }),
-      upsert: async () => ({ data: [], error: null }),
+      select: () => makeSelectResult(),
+      upsert: async () => emptyResult,
     }),
   };
 }
 
 const supabase = makeClient();
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// ── Quest progress ────────────────────────────────────────────────────────────
 
 export async function loadProgress(address) {
   if (!isSupabaseConfigured) return [];
-
   const { data, error } = await supabase
     .from('quest_progress')
     .select('quest_id')
     .eq('wallet_address', address.toLowerCase());
-
   if (error) throw new Error(`Failed to load progress: ${error.message}`);
   return (data ?? []).map((r) => r.quest_id);
 }
 
-export async function saveProgress(address, questId) {
+export async function saveProgress(address, questId, xp = 0) {
   if (!isSupabaseConfigured) return;
-
-  // No onConflict needed — Supabase infers it from the primary key.
   const { error } = await supabase
     .from('quest_progress')
-    .upsert({ wallet_address: address.toLowerCase(), quest_id: questId });
-
+    .upsert({ wallet_address: address.toLowerCase(), quest_id: questId, xp });
   if (error) throw new Error(`Failed to save progress: ${error.message}`);
+}
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export async function fetchLeaderboard() {
+  if (!isSupabaseConfigured) return [];
+
+  const [{ data: progress, error: pe }, { data: profiles }] = await Promise.all([
+    supabase.from('quest_progress').select('wallet_address, xp'),
+    supabase.from('profiles').select('wallet_address, display_name'),
+  ]);
+  if (pe) throw new Error(`Leaderboard error: ${pe.message}`);
+
+  // Aggregate XP per wallet
+  const agg = {};
+  for (const { wallet_address, xp = 0 } of (progress ?? [])) {
+    if (!agg[wallet_address]) agg[wallet_address] = { total_xp: 0, quests_read: 0 };
+    agg[wallet_address].total_xp    += xp;
+    agg[wallet_address].quests_read += 1;
+  }
+
+  const nameMap = Object.fromEntries(
+    (profiles ?? []).map((p) => [p.wallet_address, p.display_name])
+  );
+
+  return Object.entries(agg)
+    .map(([addr, stats]) => ({ wallet_address: addr, display_name: nameMap[addr] ?? null, ...stats }))
+    .sort((a, b) => b.total_xp - a.total_xp)
+    .slice(0, 20);
+}
+
+// ── Profiles / display names ──────────────────────────────────────────────────
+
+export async function setDisplayName(address, displayName) {
+  if (!isSupabaseConfigured) return;
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({ wallet_address: address.toLowerCase(), display_name: displayName });
+  if (error) throw new Error(`Failed to save display name: ${error.message}`);
 }

@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Quest content — edit this file each week to update the digest.
-// Each quest needs: id, xp, icon, iconBg, category, categoryColor, title,
-//   badges?, description, details[], stats[]?, link?, variant ('main'|'sub')
+// Add a new entry to WEEKS for each new week. The most recent entry is shown
+// by default. Quest IDs must be unique across all weeks.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const QUEST_SECTIONS = [
+const SECTIONS_MAR_4_2026 = [
   // ── Active Votes ───────────────────────────────────────────────────────────
   {
     id:    'votes',
@@ -94,7 +94,7 @@ export const QUEST_SECTIONS = [
         title:   'Firestarters Grant: February Update',
         description:
           'The Firestarters grant program posted its February update. Check in on ' +
-          'milestone progress, deliverables completed, and what\'s coming next.',
+          "milestone progress, deliverables completed, and what's coming next.",
       },
       {
         id:      'rad-update',
@@ -104,7 +104,7 @@ export const QUEST_SECTIONS = [
         title:   'Rewarding Active Delegates (RAD): February Update',
         description:
           'The RAD program tracks and rewards delegates for active governance participation. ' +
-          'February\'s update covers who met their thresholds and what rewards are distributed.',
+          "February's update covers who met their thresholds and what rewards are distributed.",
       },
       {
         id:      'timeboost',
@@ -141,6 +141,26 @@ export const QUEST_SECTIONS = [
   },
 ];
 
-// Flat list of all quest ids (for progress counting)
-export const ALL_QUESTS = QUEST_SECTIONS.flatMap((s) => s.quests);
-export const TOTAL_XP   = ALL_QUESTS.reduce((sum, q) => sum + q.xp, 0);
+// ── Weeks registry ────────────────────────────────────────────────────────────
+// Add a new object here each week. Most-recent entry = default on load.
+
+export const WEEKS = [
+  {
+    id:         'week-2026-03-04',
+    label:      'Week of Mar 4, 2026',
+    shortLabel: 'Mar 4, 2026',
+    sections:   SECTIONS_MAR_4_2026,
+  },
+  // {
+  //   id:         'week-2026-03-11',
+  //   label:      'Week of Mar 11, 2026',
+  //   shortLabel: 'Mar 11, 2026',
+  //   sections:   SECTIONS_MAR_11_2026,
+  // },
+];
+
+export const DEFAULT_WEEK_ID = WEEKS[WEEKS.length - 1].id;
+
+export function getWeekById(id) {
+  return WEEKS.find((w) => w.id === id) ?? WEEKS[WEEKS.length - 1];
+}
