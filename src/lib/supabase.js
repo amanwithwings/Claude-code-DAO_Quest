@@ -29,14 +29,16 @@ const supabase = makeClient();
 
 // ── Quest progress ────────────────────────────────────────────────────────────
 
+// Returns [{quest_id, xp}] so callers can both restore progress and
+// detect/backfill rows that were saved before the xp column existed.
 export async function loadProgress(address) {
   if (!isSupabaseConfigured) return [];
   const { data, error } = await supabase
     .from('quest_progress')
-    .select('quest_id')
+    .select('quest_id, xp')
     .eq('wallet_address', address.toLowerCase());
   if (error) throw new Error(`Failed to load progress: ${error.message}`);
-  return (data ?? []).map((r) => r.quest_id);
+  return data ?? [];
 }
 
 export async function saveProgress(address, questId, xp = 0) {

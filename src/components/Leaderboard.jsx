@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useEnsName }                       from 'wagmi';
 import { fetchLeaderboard, setDisplayName } from '../lib/supabase';
 
@@ -85,8 +85,18 @@ export function Leaderboard({ currentAddress, refreshTrigger }) {
     }
   }, []);
 
-  // Reload when quests are marked read
-  useEffect(() => { load(); }, [load, refreshTrigger]);
+  // Initial load on mount
+  useEffect(() => { load(); }, [load]);
+
+  // Debounced refresh when quests are marked read — coalesces rapid marks
+  // (e.g. reading all 8 quests quickly) into a single DB fetch after 2 s.
+  const debounceRef = useRef(null);
+  useEffect(() => {
+    if (!refreshTrigger) return;
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(load, 2000);
+    return () => clearTimeout(debounceRef.current);
+  }, [refreshTrigger, load]);
 
   const myAddr  = currentAddress?.toLowerCase();
   const myIndex = entries.findIndex((e) => e.wallet_address === myAddr);
@@ -111,8 +121,8 @@ export function Leaderboard({ currentAddress, refreshTrigger }) {
       {/* Header */}
       <div className="lb-header">
         <span className="lb-title">🏆 Leaderboard</span>
-        <button className="lb-refresh" onClick={load} disabled={loading} title="Refresh">
-          <span style={{ display: 'inline-block', transition: 'transform 0.4s', transform: loading ? 'rotate(360deg)' : 'none' }}>↻</span>
+        <button className={`lb-refresh ${loading ? 'lb-refresh-spinning' : ''}`} onClick={load} disabled={loading} title="Refresh">
+          ↻
         </button>
       </div>
 

@@ -12,21 +12,23 @@ import './App.css';
 
 const queryClient = new QueryClient();
 
+// Note: React.StrictMode is intentionally omitted here. wagmi v2 uses mutation
+// hooks that are sensitive to React 18's double-invoking behaviour in Strict
+// Mode — it causes the wallet reconnect effect to fire twice, which breaks the
+// "wallet connected → UI updates" flow without a manual page refresh.
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor:          '#28A0F0',
-            accentColorForeground: '#ffffff',
-            borderRadius:         'medium',
-            fontStack:            'system',
-          })}
-        >
-          <App />
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  </React.StrictMode>
+  <WagmiProvider config={wagmiConfig}>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider
+        theme={darkTheme({
+          accentColor:           '#28A0F0',
+          accentColorForeground: '#ffffff',
+          borderRadius:          'medium',
+          fontStack:             'system',
+        })}
+      >
+        <App />
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
