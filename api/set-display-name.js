@@ -2,27 +2,23 @@
 // Requires a wallet signature that proves ownership of `address`.
 // Writes via the Supabase service-role key (bypasses client RLS).
 
-import { createClient }              from '@supabase/supabase-js';
+import { createClient }               from '@supabase/supabase-js';
 import { recoverAddress, hashMessage } from 'viem';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
+  process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
-export const handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method Not Allowed');
   }
 
-  let body;
-  try { body = JSON.parse(event.body); }
-  catch { return { statusCode: 400, body: 'Invalid JSON' }; }
-
-  const { address, displayName, signature, message } = body ?? {};
+  const { address, displayName, signature, message } = req.body ?? {};
 
   if (!address || !displayName || !signature || !message) {
-    return { statusCode: 400, body: 'Missing required fields' };
+    return res.status(400).send('Missing required fields');
   }
 
   // Verify that the signature was produced by `address`
@@ -30,11 +26,11 @@ export const handler = async (event) => {
   try {
     recovered = recoverAddress({ hash: hashMessage(message), signature });
   } catch {
-    return { statusCode: 400, body: 'Invalid signature format' };
+    return res.status(400).send('Invalid signature format');
   }
 
   if (recovered.toLowerCase() !== address.toLowerCase()) {
-    return { statusCode: 403, body: 'Signature does not match address' };
+    return res.status(403).send('Signature does not match address');
   }
 
   const trimmed = displayName.slice(0, 30); // enforce server-side max length
@@ -42,11 +38,7 @@ export const handler = async (event) => {
     .from('profiles')
     .upsert({ wallet_address: address.toLowerCase(), display_name: trimmed });
 
-  if (error) return { statusCode: 500, body: error.message };
+  if (error) return res.status(500).send(error.message);
 
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ok: true }),
-  };
-};
+  return res.status(200).json({ ok: true });
+}
