@@ -508,6 +508,160 @@ const SECTIONS_MAR_4_2026 = [
   },
 ];
 
+// ── Week of Mar 10, 2026 ──────────────────────────────────────────────────────
+const SECTIONS_MAR_10_2026 = [
+  // ── Active Votes ───────────────────────────────────────────────────────────
+  {
+    id:    'votes',
+    label: '🗳️ Active Votes',
+    quests: [
+      {
+        id:            'dvp-quorum-mar10',
+        xp:            30,
+        variant:       'main',
+        icon:          '⏳',
+        iconBg:        'rgba(248,81,73,0.12)',
+        category:      'On-Chain Vote',
+        categoryColor: 'var(--red)',
+        title:         'DVP Quorum Vote Closes Thursday — Quorum Still Needed',
+        badges:        [{ type: 'live', label: 'Closes Mar 12' }],
+        description:
+          'The onchain constitutional vote for DVP Quorum & Proposal Cancellation enters ' +
+          'its final days. Support is near-unanimous but the vote remains below the ' +
+          '218.85m ARB constitutional quorum threshold. ' +
+          'Every delegated vote counts — the window closes March 12th at 22:47 UTC.',
+        details: [
+          'Near-unanimous support: ~99.8% For by ARB weight',
+          'Still below the 218.85m ARB constitutional quorum — delegate participation is critical',
+          'Closes Thursday March 12th at 22:47 UTC — last chance to vote',
+          'If passed: quorum computation upgrades and proposal cancellation window both activate',
+        ],
+        stats: [
+          { type: 'vote-for',     label: 'For: 56.55m ARB' },
+          { type: 'vote-against', label: 'Against: 336k ARB' },
+          { type: 'vote-quorum',  label: 'Quorum needed: 218.85m ARB' },
+        ],
+        proposal: {
+          source:     'tally',
+          id:         '112177996398925212273579485756315626637025938627124330171390356044681347897430',
+          governorId: 'eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
+        },
+        link: {
+          href:  'https://www.tally.xyz/gov/arbitrum/proposal/112177996398925212273579485756315626637025938627124330171390356044681347897430?govId=eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
+          label: '🗳️ Vote on Tally',
+        },
+      },
+      {
+        id:            'automate-funds-tempcheck',
+        xp:            25,
+        variant:       'main',
+        icon:          '🏦',
+        iconBg:        'rgba(40,160,240,0.12)',
+        category:      'Temperature Check',
+        categoryColor: 'var(--arb-blue)',
+        title:         'Temp Check: Automate Consolidation of Idle Funds into Treasury Portfolio',
+        badges:        [{ type: 'live', label: 'Vote Now' }],
+        description:
+          'Entropy Advisors\' proposal to automatically route surplus and idle non-ARB capital ' +
+          'from DAO programs into the Arbitrum Treasury Management Committee (ATMC) is now live ' +
+          'for a Snapshot temperature check. Instead of requiring idle funds to flow back to the ' +
+          'treasury and then through two separate governance votes before being put to work, ' +
+          'this directive would consolidate them to the ATMC automatically.',
+        details: [
+          'Covers unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
+          'ARB tokens are explicitly excluded — this applies to other capital only',
+          'Each ATMC deployment of consolidated funds still requires separate OAT approval',
+          'DAO retains full clawback rights via a Snapshot vote at any time',
+          'Quorum: non-constitutional threshold (pre-DVP) applies to this vote',
+        ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0x703ef86b79590b07f770dd2369666085e112e2a8998a7e2f8011ed755611968c',
+        },
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x703ef86b79590b07f770dd2369666085e112e2a8998a7e2f8011ed755611968c',
+          label: '📊 Vote on Snapshot',
+        },
+      },
+    ],
+  },
+
+  // ── Forum Discussions ──────────────────────────────────────────────────────
+  {
+    id:    'forum',
+    label: '💬 Forum Discussions',
+    quests: [
+      {
+        id:            'arbos60-elara',
+        xp:            25,
+        variant:       'main',
+        icon:          '⚙️',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Constitutional AIP',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'ArbOS 60 Elara: Multidimensional Gas Pricing, 96 KB Stylus Limit & Base Fee Manager',
+        badges:        [{ type: 'new', label: 'Discussion' }],
+        description:
+          'Offchain Labs has proposed ArbOS 60 Elara, the next major upgrade to Arbitrum One and ' +
+          'Nova. The centrepiece is Dynamic Pricing — a first-of-its-kind multidimensional gas ' +
+          'algorithm that tracks seven resource dimensions (compute, storage growth, storage access, ' +
+          'calldata, etc.) and prices each independently. The upgrade also raises the Stylus smart ' +
+          'contract size cap from 24 KB to 96 KB, and introduces a BaseFeeManager contract ' +
+          'delegating minimum base fee adjustments to OCL for two years — without requiring ' +
+          'a full DAO vote each time.',
+        details: [
+          'Dynamic Pricing: gas price reflects actual node resource bottlenecks — fairer costs, more sustainable capacity',
+          'Stylus code size 24 KB → 96 KB: unblocks larger Rust/WASM contracts and reduces SDK friction',
+          'BaseFeeManager: OCL can adjust min L2 base fee between 0.01–0.10 gwei for 2 years, DAO retains clawback',
+          'AltDA Layer API & compliance filtering included but intentionally disabled on Arbitrum One / Nova',
+          'Trail of Bits audit underway; temperature check vote to follow after gas target benchmarking completes',
+        ],
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/constitutional-aip-arbos-60-elara/30601',
+          label: '💬 Read Full AIP Discussion',
+        },
+      },
+    ],
+  },
+
+  // ── Other Updates ──────────────────────────────────────────────────────────
+  {
+    id:    'other',
+    label: '📰 Other Updates',
+    quests: [
+      {
+        id:      'stylus-sprint-demo2',
+        xp:      10,
+        variant: 'sub',
+        icon:    '⚙️',
+        title:   'Stylus Sprint Demo Day #2 — Recording Available',
+        description:
+          'On March 5th, Entropy hosted the second Stylus Sprint Demo Day on behalf of the ' +
+          'Stylus Sprint Committee. Four teams presented their work and progress from the past year. ' +
+          'The recording is publicly accessible.',
+        link: {
+          href:  'https://drive.google.com/file/d/1HrT332scShHTBM6yoMS2bO4UvGD9HIkz/view',
+          label: '▶️ Watch Recording',
+        },
+      },
+      {
+        id:      'drip-mar10',
+        xp:      10,
+        variant: 'sub',
+        icon:    '💧',
+        title:   'DRIP Update — Entropy Advisors Summary',
+        description:
+          'Entropy Advisors shared their latest DRIP (DeFi Incentives Program) summary. ' +
+          'Check the thread for current epoch metrics, protocol performance, and season outlook.',
+        link: {
+          href:  'https://x.com/EntropyAdvisors/status/2029580308354412689',
+          label: '🐦 View on X',
+        },
+      },
+    ],
+  },
+];
+
 // ── Weeks registry ────────────────────────────────────────────────────────────
 // Add a new object here each week. Most-recent entry = default on load.
 
@@ -529,6 +683,12 @@ export const WEEKS = [
     label:      'Week of Mar 4, 2026',
     shortLabel: 'Mar 4, 2026',
     sections:   SECTIONS_MAR_4_2026,
+  },
+  {
+    id:         'week-2026-03-10',
+    label:      'Week of Mar 10, 2026',
+    shortLabel: 'Mar 10, 2026',
+    sections:   SECTIONS_MAR_10_2026,
   },
 ];
 
