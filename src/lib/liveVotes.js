@@ -12,7 +12,9 @@
 //   { forARB, againstARB, abstainARB, quorumARB, status, endTime }
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TALLY_ENDPOINT    = 'https://api.tally.xyz/query';
+// /api/tally is proxied through the server (Vite proxy in dev, Netlify function
+// in prod) so the API key is never exposed in the client bundle.
+const TALLY_ENDPOINT    = '/api/tally';
 const SNAPSHOT_ENDPOINT = 'https://hub.snapshot.org/graphql';
 
 // ARB has 18 decimals. Tally returns weights as integer strings (wei).
@@ -53,14 +55,11 @@ const TALLY_QUERY = `
 `;
 
 async function fetchTally(onchainId, governorId) {
-  const key = import.meta.env.VITE_TALLY_API_KEY;
-  if (!key) { console.warn('VITE_TALLY_API_KEY not set'); return null; }
-
   const res = await fetch(TALLY_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Api-Key': key,
+      // No API key here — injected server-side by the proxy
     },
     body: JSON.stringify({
       query: TALLY_QUERY,

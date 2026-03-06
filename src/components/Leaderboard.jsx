@@ -61,7 +61,7 @@ function LbRow({ entry, rank, isMe, ensName, onEditClick }) {
 }
 
 // ── Main leaderboard component ────────────────────────────────────────────────
-export function Leaderboard({ currentAddress, refreshTrigger }) {
+export function Leaderboard({ currentAddress, authProof, refreshTrigger }) {
   const [entries,    setEntries]    = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
@@ -108,7 +108,7 @@ export function Leaderboard({ currentAddress, refreshTrigger }) {
     if (!currentAddress || !name) return;
     setSavingName(true);
     try {
-      await setDisplayName(currentAddress, name);
+      await setDisplayName(currentAddress, name, authProof);
       setEditing(false);
       await load();
     } catch (err) {

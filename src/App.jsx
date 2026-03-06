@@ -137,6 +137,7 @@ export default function App() {
 
   const [isSigned,        setIsSigned]        = useState(false);
   const [signing,         setSigning]          = useState(false);
+  const [authProof,       setAuthProof]        = useState(null); // { signature, message }
   const [readSet,         setReadSet]          = useState(new Set());
   const [loading,         setLoading]          = useState(false);
   const [toastMsg,        setToastMsg]         = useState('');
@@ -182,11 +183,18 @@ export default function App() {
   useEffect(() => {
     if (!isConnected || !address) {
       setIsSigned(false);
+      setAuthProof(null);
       setReadSet(new Set());
       return;
     }
     if (localStorage.getItem('dao_quest_wallet') === address.toLowerCase()) {
       setIsSigned(true);
+      // Restore auth proof from sessionStorage (keyed per address so switching
+      // wallets never carries over the wrong signature)
+      try {
+        const stored = sessionStorage.getItem(`auth_proof_${address.toLowerCase()}`);
+        if (stored) setAuthProof(JSON.parse(stored));
+      } catch { /* ignore malformed data */ }
       fetchAndSetProgress(address);
     }
   }, [address, isConnected, fetchAndSetProgress]);
@@ -194,15 +202,19 @@ export default function App() {
   // ── Sign-in ───────────────────────────────────────────────────────────────
   const handleSignIn = useCallback(async () => {
     if (!address) return;
+    const message =
+      `Welcome to ArbitrumDAO Quest Board!\n\n` +
+      `Sign this free message to verify wallet ownership and sync your reading progress.\n\n` +
+      `No transaction will be sent.\n\nAddress: ${address}`;
     try {
       setSigning(true);
-      await signMessageAsync({
-        message:
-          `Welcome to ArbitrumDAO Quest Board!\n\n` +
-          `Sign this free message to verify wallet ownership and sync your reading progress.\n\n` +
-          `No transaction will be sent.\n\nAddress: ${address}`,
-      });
+      const signature = await signMessageAsync({ message });
       localStorage.setItem('dao_quest_wallet', address.toLowerCase());
+      // Store proof keyed by address so it survives page reloads but is
+      // isolated per wallet (sessionStorage is cleared when the tab closes)
+      const proof = { signature, message };
+      setAuthProof(proof);
+      sessionStorage.setItem(`auth_proof_${address.toLowerCase()}`, JSON.stringify(proof));
       setIsSigned(true);
     } catch (err) {
       if (err?.code !== 4001) {
@@ -227,13 +239,13 @@ export default function App() {
 
     if (isSigned && address) {
       try {
-        await saveProgress(address, questId, xp);
+        await saveProgress(address, questId, xp, authProof);
       } catch (err) {
         console.error(err);
         showToast('Saved locally but failed to sync — check your connection.', true);
       }
     }
-  }, [isSigned, address, showToast]);
+  }, [isSigned, address, showToast, authProof]);
 
   // ── Week change: reset showAll ────────────────────────────────────────────
   const handleWeekChange = useCallback((weekId) => {
@@ -379,6 +391,7 @@ export default function App() {
           <aside className="lb-sidebar">
             <Leaderboard
               currentAddress={address}
+              authProof={authProof}
               refreshTrigger={lbRefreshCount}
             />
           </aside>
