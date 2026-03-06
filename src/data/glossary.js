@@ -68,13 +68,19 @@ const DEF = {
     'that pass here are executed directly on Arbitrum.',
 
   OAT:
-    'Onchain Approval Threshold — the approval mechanism required before the ATMC ' +
-    'can deploy consolidated treasury funds into a new investment strategy. ' +
-    '⚠️ Definition pending confirmation.',
+    'Oversight and Transparency Committee for OpCo — the committee responsible for ' +
+    'overseeing the Arbitrum Foundation\'s operational company (OpCo) and ensuring ' +
+    'transparency of its activities to the DAO.',
 
-  // TODO: confirm definitions with team before enabling these
-  // DDA_V2: '...',
-  // AEP: '...',
+  DDA_V2:
+    'Delegated Domain Allocation V2 — Questbook\'s second-generation program that ' +
+    'allocates DAO grants across specific domains (DeFi, gaming, dev tooling, etc.) ' +
+    'through elected domain allocators rather than a central committee.',
+
+  AEP:
+    'Arbitrum Expansion Pack — a DAO-approved package of initiatives or incentives ' +
+    'that expands Arbitrum\'s ecosystem, often including protocol integrations, ' +
+    'liquidity programmes, or chain-level partnerships.',
 };
 
 export const GLOSSARY = {
@@ -117,6 +123,18 @@ export const GLOSSARY = {
   'snapshot':                             DEF.SNAPSHOT,
   'tally':                                DEF.TALLY,
 
-  // OAT (pending confirmation)
+  // OAT
+  'oat':                                  DEF.OAT,
   'oat approval':                         DEF.OAT,
+  'oversight and transparency committee': DEF.OAT,
+
+  // DDA V2 (Questbook Delegated Domain Allocation)
+  'dda':                                  DEF.DDA_V2,
+  'dda v2':                               DEF.DDA_V2,
+  'dda v2 program':                       DEF.DDA_V2,
+  'delegated domain allocation':          DEF.DDA_V2,
+
+  // AEP (Arbitrum Expansion Pack)
+  'aep':                                  DEF.AEP,
+  'arbitrum expansion pack':              DEF.AEP,
 };

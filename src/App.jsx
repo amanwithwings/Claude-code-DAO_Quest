@@ -241,13 +241,8 @@ export default function App() {
     setShowAll(false);
   }, []);
 
-  // ── Auto-expand when all top-3 are read ───────────────────────────────────
-  const topQuests3 = useMemo(() => weekQuests.slice(0, TOP_N), [weekQuests]);
-  useEffect(() => {
-    if (!showAll && topQuests3.length > 0 && topQuests3.every((q) => readSet.has(q.id))) {
-      setShowAll(true);
-    }
-  }, [readSet, topQuests3, showAll]);
+  // Top 3: first 3 quests from the flattened week list (already ordered by importance)
+  const TOP_N = 3;
 
   const weekQuests = useMemo(
     () => getWeekById(selectedWeekId).sections.flatMap((s) => s.quests),
@@ -258,8 +253,13 @@ export default function App() {
     [weekQuests, readSet]
   );
 
-  // Top 3: first 3 quests from the flattened week list (already ordered by importance)
-  const TOP_N = 3;
+  // ── Auto-expand when all top-3 are read ───────────────────────────────────
+  const topQuests3 = useMemo(() => weekQuests.slice(0, TOP_N), [weekQuests]);
+  useEffect(() => {
+    if (!showAll && topQuests3.length > 0 && topQuests3.every((q) => readSet.has(q.id))) {
+      setShowAll(true);
+    }
+  }, [readSet, topQuests3, showAll]);
 
   return (
     <PassphraseGate>
