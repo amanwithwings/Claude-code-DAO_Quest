@@ -32,14 +32,14 @@ create policy "Allow all for now"
 -- (safe to run again — IF NOT EXISTS / ADD COLUMN IF NOT EXISTS)
 alter table quest_progress add column if not exists xp integer not null default 0;
 
--- ── Migration: tighten RLS — run on production once Netlify functions are live ──
+-- ── Migration: tighten RLS — run on production once Vercel API routes are live ──
 -- Reads stay open (leaderboard needs all wallets).
--- Writes are now handled by netlify/functions/{save-progress,set-display-name}
+-- Writes are now handled by api/{save-progress,set-display-name}.js
 -- using the service-role key, which bypasses RLS entirely.
 -- The anon key (used by the browser client) is denied all writes.
 --
 -- WARNING: After applying this, local dev writes via direct Supabase calls
--- will fail unless you run `netlify dev` (which starts the function server).
+-- will fail unless you run `vercel dev` (which starts the API function server).
 -- Alternatively, keep a separate dev Supabase project with the permissive policy.
 
 drop policy if exists "Allow all for now" on quest_progress;
