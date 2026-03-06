@@ -77,9 +77,14 @@ function VoteBar({ stats, liveVotes, fetching }) {
 
   const quorumMet = !quorumAmt || forAmt >= quorumAmt;
   const isPassing = forAmt > againstAmt;
+  const isClosed  = liveVotes?.status === 'closed' || liveVotes?.status === 'executed'
+                 || liveVotes?.status === 'defeated' || liveVotes?.status === 'succeeded';
 
   let statusLabel, statusCls;
-  if (quorumMet && isPassing)       { statusLabel = '✅ Passing · Quorum met';   statusCls = 'vote-status-pass'; }
+  if (isClosed) {
+    if (isPassing) { statusLabel = '✅ Passed';   statusCls = 'vote-status-pass'; }
+    else           { statusLabel = '❌ Defeated'; statusCls = 'vote-status-fail'; }
+  } else if (quorumMet && isPassing)       { statusLabel = '✅ Passing · Quorum met';   statusCls = 'vote-status-pass'; }
   else if (isPassing && !quorumMet) { statusLabel = '⚠️ Passing · Below quorum'; statusCls = 'vote-status-warn'; }
   else                              { statusLabel = '❌ Failing';                 statusCls = 'vote-status-fail'; }
 
@@ -103,8 +108,8 @@ function VoteBar({ stats, liveVotes, fetching }) {
         {/* Live data: show real-time counts + source indicator */}
         {isLive && (
           <span className="vote-live-indicator">
-            <span className="live-dot" />
-            {fetching ? 'updating…' : 'live · '}
+            {!isClosed && <span className="live-dot" />}
+            {fetching ? 'updating…' : isClosed ? 'final · ' : 'live · '}
             <span className="vote-live-counts">
               {fmtARB(forAmt)} for · {fmtARB(againstAmt)} against
               {quorumAmt > 0 && ` · ${fmtARB(quorumAmt)} quorum`}
