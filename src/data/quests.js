@@ -215,16 +215,16 @@ const SECTIONS_FEB_24_2026 = [
         category:      'On-Chain Constitutional Proposal',
         categoryColor: 'var(--red)',
         title:         'DVP Quorum & Proposal Cancellation: Voting Starts Thursday',
-        badges:        [{ type: 'new', label: 'Vote Thursday' }],
+        badges:        [{ type: 'new', label: 'Opens Thu' }],
         description:
           'A bundled constitutional proposal introducing two governance upgrades: ' +
           '(1) changes to ArbitrumDAO\'s quorum computation logic, and ' +
           '(2) the ability for a proposer to cancel their proposal during the 3-day pending period. ' +
-          'Voting opens Thursday and runs for 14 days. Current constitutional quorum requirement is ~219m ARB.',
+          'Voting opens Thursday and runs for 14 days. Constitutional quorum requirement: ~219m ARB.',
         details: [
-          'DVP Quorum upgrade: improves how quorum is computed to be more predictable',
-          'Proposal cancellation: proposers can pull a proposal before voting begins — a useful safety valve',
-          'Voting starts Thursday and lasts 14 days — mark your calendar!',
+          'DVP Quorum upgrade: changes how quorum is computed — based on delegated votable tokens rather than total supply',
+          'Proposal cancellation: proposers can withdraw a proposal before the vote begins',
+          'Voting window: opens Thursday, runs 14 days',
           'Constitutional quorum requirement: ~219m ARB',
         ],
         link: {
@@ -353,13 +353,14 @@ const SECTIONS_MAR_4_2026 = [
         title:         'DVP Quorum & Proposal Cancellation Upgrade',
         badges:        [{ type: 'live', label: 'Live' }],
         description:
-          'A bundled upgrade proposing two changes to ArbitrumDAO governance: ' +
-          'improved quorum computation logic and the ability to cancel proposals ' +
-          'during the 3-day pre-vote window. Voting is open through March 12th.',
+          'A bundled constitutional proposal introducing two governance upgrades: ' +
+          '(1) changes to ArbitrumDAO\'s quorum computation logic, and ' +
+          '(2) the ability for a proposer to cancel their proposal during the 3-day pending period. ' +
+          'Voting is open through March 12th.',
         details: [
-          'New quorum computation makes vote thresholds more predictable and fair',
-          'Proposal cancellation window gives the DAO a safety valve against errors or bad actors',
-          'Voting opened Thursday — closes March 12th. Your vote matters!',
+          'DVP Quorum: changes how quorum is computed — based on delegated votable tokens rather than total supply',
+          'Proposal cancellation: proposers can withdraw a proposal before the vote begins',
+          'Voting opened Thursday — closes March 12th',
         ],
         stats: [
           { type: 'vote-for',     label: 'For: 56.55m ARB' },
@@ -373,7 +374,7 @@ const SECTIONS_MAR_4_2026 = [
         },
         link: {
           href:  'https://www.tally.xyz/gov/arbitrum/proposal/112177996398925212273579485756315626637025938627124330171390356044681347897430?govId=eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
-          label: '🗳️ Vote on Tally',
+          label: '🗳️ View on Tally',
         },
       },
     ],
@@ -396,14 +397,15 @@ const SECTIONS_MAR_4_2026 = [
         badges:        [{ type: 'new', label: 'Temperature Check Soon' }],
         description:
           'Entropy Advisors proposes an operating directive that would automatically ' +
-          'route surplus and idle non-ARB funds from DAO programs into the Arbitrum ' +
-          'Treasury Management Committee (ATMC) — putting idle capital to work ' +
-          'generating yield instead of sitting dormant.',
+          'route surplus and idle non-ARB capital from DAO programs into the Arbitrum ' +
+          'Treasury Management Committee (ATMC), rather than returning it to the treasury ' +
+          'and requiring separate offchain and onchain votes before redeployment.',
         details: [
-          'Currently the DDA V2 Program and D.A.O. Grant Program hold significant idle funds',
-          'Funds would move to AF-chosen wallets immediately when feasible',
-          'Each new ATMC deployment using consolidated funds requires separate OAT approval',
-          'Temperature check expected this week — engage on the forum now!',
+          'Applies to unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
+          'ARB tokens are explicitly excluded — applies to other capital only',
+          'Each ATMC deployment of consolidated funds still requires separate OAT approval',
+          'DAO retains clawback rights via Snapshot vote at any time',
+          'Temperature check expected this week',
         ],
         link: {
           href:  'https://forum.arbitrum.foundation/t/automate-the-consolidation-of-idle-funds-into-the-treasury-management-portfolio/30579',
@@ -426,8 +428,7 @@ const SECTIONS_MAR_4_2026 = [
         title:   'Open Discussion of Proposals — Governance Call',
         badges:  [{ type: 'live', label: 'Today' }],
         description:
-          'The regular open governance call is happening today. A great chance to hear ' +
-          'from delegates, ask questions, and engage with active proposals live.',
+          'The regular open governance call is happening today. Delegates discuss active proposals and open items live.',
         link: {
           href:  'https://forum.arbitrum.foundation/t/march-3-2026-open-discussion-of-proposals-governance-call/30591',
           label: '🎙️ View Forum Thread',
@@ -523,18 +524,17 @@ const SECTIONS_MAR_10_2026 = [
         iconBg:        'rgba(248,81,73,0.12)',
         category:      'On-Chain Vote',
         categoryColor: 'var(--red)',
-        title:         'DVP Quorum Vote Closes Thursday — Quorum Still Needed',
+        title:         'DVP Quorum & Proposal Cancellation — Vote Closes Thursday',
         badges:        [{ type: 'live', label: 'Closes Mar 12' }],
         description:
-          'The onchain constitutional vote for DVP Quorum & Proposal Cancellation enters ' +
-          'its final days. Support is near-unanimous but the vote remains below the ' +
-          '218.85m ARB constitutional quorum threshold. ' +
-          'Every delegated vote counts — the window closes March 12th at 22:47 UTC.',
+          'The onchain constitutional vote for DVP Quorum & Proposal Cancellation is in its ' +
+          'final days. Support is near-unanimous but the vote is currently below the 218.85m ARB ' +
+          'constitutional quorum threshold. The window closes March 12th at 22:47 UTC.',
         details: [
-          'Near-unanimous support: ~99.8% For by ARB weight',
-          'Still below the 218.85m ARB constitutional quorum — delegate participation is critical',
-          'Closes Thursday March 12th at 22:47 UTC — last chance to vote',
-          'If passed: quorum computation upgrades and proposal cancellation window both activate',
+          'Current support: ~99.8% For by ARB weight',
+          'Currently below the 218.85m ARB constitutional quorum threshold',
+          'Vote closes Thursday March 12th at 22:47 UTC',
+          'If passed: quorum computation logic and proposal cancellation rules both update',
         ],
         stats: [
           { type: 'vote-for',     label: 'For: 56.55m ARB' },
@@ -548,7 +548,7 @@ const SECTIONS_MAR_10_2026 = [
         },
         link: {
           href:  'https://www.tally.xyz/gov/arbitrum/proposal/112177996398925212273579485756315626637025938627124330171390356044681347897430?govId=eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
-          label: '🗳️ Vote on Tally',
+          label: '🗳️ View on Tally',
         },
       },
       {
@@ -560,13 +560,13 @@ const SECTIONS_MAR_10_2026 = [
         category:      'Temperature Check',
         categoryColor: 'var(--arb-blue)',
         title:         'Temp Check: Automate Consolidation of Idle Funds into Treasury Portfolio',
-        badges:        [{ type: 'live', label: 'Vote Now' }],
+        badges:        [{ type: 'live', label: 'Active' }],
         description:
-          'Entropy Advisors\' proposal to automatically route surplus and idle non-ARB capital ' +
-          'from DAO programs into the Arbitrum Treasury Management Committee (ATMC) is now live ' +
-          'for a Snapshot temperature check. Instead of requiring idle funds to flow back to the ' +
-          'treasury and then through two separate governance votes before being put to work, ' +
-          'this directive would consolidate them to the ATMC automatically.',
+          'Entropy Advisors\' proposal to establish an operating directive that would automatically ' +
+          'route surplus and idle non-ARB capital from DAO programs into the Arbitrum Treasury ' +
+          'Management Committee (ATMC) is now live for a Snapshot temperature check. Under the ' +
+          'current process, idle funds must be returned to the treasury and then cleared through ' +
+          'separate offchain and onchain votes before redeployment; this proposal would remove that step.',
         details: [
           'Covers unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
           'ARB tokens are explicitly excluded — this applies to other capital only',
@@ -580,7 +580,7 @@ const SECTIONS_MAR_10_2026 = [
         },
         link: {
           href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x703ef86b79590b07f770dd2369666085e112e2a8998a7e2f8011ed755611968c',
-          label: '📊 Vote on Snapshot',
+          label: '📊 View on Snapshot',
         },
       },
     ],
