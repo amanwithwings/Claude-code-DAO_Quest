@@ -27,6 +27,11 @@ function weiToARB(weiStr) {
 }
 
 // ── Tally (onchain governance) ────────────────────────────────────────────────
+// Confirmed schema via introspection 2026-03-06:
+//   - ProposalInput uses onchainId + governorId (not a combined id string)
+//   - VoteStats field is votesCount (Uint256 string), not weight
+//   - voteStats.type is lowercase: 'for' / 'against' / 'abstain'
+//   - end is BlockOrTimestamp union — needs inline fragments
 const TALLY_QUERY = `
   query LiveProposal($input: ProposalInput!) {
     proposal(input: $input) {
@@ -35,22 +40,21 @@ const TALLY_QUERY = `
       quorum
       voteStats {
         type
-        weight
+        votesCount
         votersCount
+        percent
       }
-      end { timestamp }
+      end {
+        ... on Block            { timestamp }
+        ... on BlocklessTimestamp { timestamp }
+      }
     }
   }
 `;
 
-async function fetchTally(proposalId, governorId) {
+async function fetchTally(onchainId, governorId) {
   const key = import.meta.env.VITE_TALLY_API_KEY;
   if (!key) { console.warn('VITE_TALLY_API_KEY not set'); return null; }
-
-  // Tally full proposal ID format: eip155:{chainId}:{governorAddr}:{proposalId}
-  const fullId = governorId
-    ? `${governorId}:${proposalId}`
-    : proposalId;
 
   const res = await fetch(TALLY_ENDPOINT, {
     method: 'POST',
@@ -60,7 +64,7 @@ async function fetchTally(proposalId, governorId) {
     },
     body: JSON.stringify({
       query: TALLY_QUERY,
-      variables: { input: { id: fullId } },
+      variables: { input: { onchainId, governorId } },
     }),
   });
 
@@ -75,17 +79,21 @@ async function fetchTally(proposalId, governorId) {
   const p = json.data?.proposal;
   if (!p) return null;
 
-  const forStat     = p.voteStats?.find((s) => s.type === 'FOR');
-  const againstStat = p.voteStats?.find((s) => s.type === 'AGAINST');
-  const abstainStat = p.voteStats?.find((s) => s.type === 'ABSTAIN');
+  // type values are lowercase: 'for', 'against', 'abstain', 'pendingfor', …
+  const forStat     = p.voteStats?.find((s) => s.type === 'for');
+  const againstStat = p.voteStats?.find((s) => s.type === 'against');
+  const abstainStat = p.voteStats?.find((s) => s.type === 'abstain');
+
+  // end.timestamp is an ISO 8601 string (e.g. "2026-03-12T22:47:59Z")
+  const endTimestamp = p.end?.timestamp;
 
   return {
-    forARB:     weiToARB(forStat?.weight),
-    againstARB: weiToARB(againstStat?.weight),
-    abstainARB: weiToARB(abstainStat?.weight),
+    forARB:     weiToARB(forStat?.votesCount),
+    againstARB: weiToARB(againstStat?.votesCount),
+    abstainARB: weiToARB(abstainStat?.votesCount),
     quorumARB:  weiToARB(p.quorum),
     status:     (p.status ?? 'active').toLowerCase(),
-    endTime:    p.end?.timestamp ? new Date(Number(p.end.timestamp) * 1000) : null,
+    endTime:    endTimestamp ? new Date(endTimestamp) : null,
     source:     'tally',
   };
 }
