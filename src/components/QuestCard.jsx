@@ -191,7 +191,7 @@ export function QuestCard({ quest, isRead, onMarkRead }) {
             </ul>
           )}
 
-          {hasStats && (
+          {(hasStats || quest.proposal) && (
             <>
               <VoteBar stats={quest.stats} liveVotes={liveVotes} fetching={fetching} />
               {/* Static stat chips shown only when no live data */}
