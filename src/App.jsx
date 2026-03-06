@@ -241,6 +241,9 @@ export default function App() {
     setShowAll(false);
   }, []);
 
+  // Top 3: first 3 quests from the flattened week list (already ordered by importance)
+  const TOP_N = 3;
+
   const weekQuests = useMemo(
     () => getWeekById(selectedWeekId).sections.flatMap((s) => s.quests),
     [selectedWeekId]
@@ -250,9 +253,13 @@ export default function App() {
     [weekQuests, readSet]
   );
 
-  // Top 3: first 3 quests from the flattened week list (already ordered by importance)
-  const TOP_N = 3;
-  const topQuests = useMemo(() => weekQuests.slice(0, TOP_N), [weekQuests]);
+  // ── Auto-expand when all top-3 are read ───────────────────────────────────
+  const topQuests3 = useMemo(() => weekQuests.slice(0, TOP_N), [weekQuests]);
+  useEffect(() => {
+    if (!showAll && topQuests3.length > 0 && topQuests3.every((q) => readSet.has(q.id))) {
+      setShowAll(true);
+    }
+  }, [readSet, topQuests3, showAll]);
 
   return (
     <PassphraseGate>
@@ -305,16 +312,16 @@ export default function App() {
             {/* Top-3 / All toggle header */}
             <div className="updates-header">
               <span className="updates-title">
-                {showAll ? 'All Updates' : '✨ Top 3 This Week'}
+                {showAll ? 'All Updates This Week' : '✨ Top Updates This Week'}
               </span>
-              <button
-                className="btn btn-ghost btn-sm"
-                onClick={() => setShowAll((v) => !v)}
-              >
-                {showAll
-                  ? '← Show less'
-                  : `All ${weekQuests.length} updates →`}
-              </button>
+              {showAll && (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setShowAll(false)}
+                >
+                  ← Show less
+                </button>
+              )}
             </div>
 
             {showAll ? (
@@ -335,17 +342,34 @@ export default function App() {
                 </div>
               ))
             ) : (
-              /* Top 3 flat view */
-              <div className="quest-list">
-                {topQuests.map((quest) => (
-                  <QuestItem
-                    key={quest.id}
-                    quest={quest}
-                    isRead={readSet.has(quest.id)}
-                    onMarkRead={markRead}
-                  />
-                ))}
-              </div>
+              /* Top 3 flat view + teaser */
+              <>
+                <div className="quest-list">
+                  {topQuests3.map((quest) => (
+                    <QuestItem
+                      key={quest.id}
+                      quest={quest}
+                      isRead={readSet.has(quest.id)}
+                      onMarkRead={markRead}
+                    />
+                  ))}
+                </div>
+                {weekQuests.length > TOP_N && (
+                  <button
+                    className="more-updates-teaser"
+                    onClick={() => setShowAll(true)}
+                  >
+                    <span>📰</span>
+                    <span>
+                      <span className="more-updates-count">
+                        {weekQuests.length - TOP_N} more
+                      </span>
+                      {' '}update{weekQuests.length - TOP_N !== 1 ? 's' : ''} this week
+                    </span>
+                    <span className="more-updates-arrow">↓</span>
+                  </button>
+                )}
+              </>
             )}
 
             <CompletionBanner show={allDone} />
