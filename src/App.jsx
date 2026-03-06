@@ -9,6 +9,60 @@ import { QuestCard, SubQuestCard }                  from './components/QuestCard
 import { WeekSelector }                             from './components/WeekSelector';
 import { Leaderboard }                              from './components/Leaderboard';
 
+// ── Passphrase gate ───────────────────────────────────────────────────────────
+function PassphraseGate({ children }) {
+  const KEY = import.meta.env.VITE_ACCESS_KEY;
+  const [unlocked, setUnlocked] = useState(
+    !KEY || sessionStorage.getItem('dao_unlocked') === '1'
+  );
+  const [input,  setInput]  = useState('');
+  const [shake,  setShake]  = useState(false);
+  const [error,  setError]  = useState(false);
+
+  const tryUnlock = () => {
+    if (input.trim().toLowerCase() === KEY.toLowerCase()) {
+      sessionStorage.setItem('dao_unlocked', '1');
+      setUnlocked(true);
+    } else {
+      setError(true);
+      setShake(true);
+      setInput('');
+      setTimeout(() => { setShake(false); setError(false); }, 700);
+    }
+  };
+
+  if (unlocked) return children;
+
+  return (
+    <div className="lock-screen">
+      <div className="lock-card">
+        <div className="lock-logo">
+          <svg width="52" height="60" viewBox="0 0 40 46" fill="none">
+            <path d="M20 2L37.3 12V32L20 44L2.7 32V12L20 2Z" fill="#1B2559" stroke="#9DCCED" strokeWidth="1.5"/>
+            <path d="M11.5 33L18 14" stroke="rgba(255,255,255,0.55)" strokeWidth="2.2" strokeLinecap="round"/>
+            <path d="M14 35L21 13L28 35" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <path d="M17 27H25" stroke="#12AAFF" strokeWidth="2.4" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div className="lock-title">Arbitrum<span className="title-accent">DAO</span> Quest Board</div>
+        <div className="lock-subtitle">Enter your access key to continue</div>
+        <input
+          className={`lock-input ${shake ? 'lock-shake' : ''} ${error ? 'lock-error' : ''}`}
+          type="password"
+          placeholder="Access key"
+          value={input}
+          autoFocus
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && tryUnlock()}
+        />
+        <button className="btn btn-primary lock-btn" onClick={tryUnlock}>
+          Enter →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Wallet sign-in banner ─────────────────────────────────────────────────────
 function SignInBanner({ onSign, loading }) {
   return (
@@ -67,6 +121,15 @@ function CompletionBanner({ show }) {
   );
 }
 
+// ── Quest renderer helper ─────────────────────────────────────────────────────
+function QuestItem({ quest, isRead, onMarkRead }) {
+  return quest.variant === 'sub' ? (
+    <SubQuestCard quest={quest} isRead={isRead} onMarkRead={onMarkRead} />
+  ) : (
+    <QuestCard quest={quest} isRead={isRead} onMarkRead={onMarkRead} />
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App() {
   const { address, isConnected } = useAccount();
@@ -80,6 +143,7 @@ export default function App() {
   const [toastError,      setToastError]       = useState(false);
   const [selectedWeekId,  setSelectedWeekId]   = useState(DEFAULT_WEEK_ID);
   const [lbRefreshCount,  setLbRefreshCount]   = useState(0);
+  const [showAll,         setShowAll]          = useState(false);
   const toastTimer = useRef(null);
 
   const showToast = useCallback((msg, isError = false) => {
@@ -92,17 +156,14 @@ export default function App() {
   const fetchAndSetProgress = useCallback(async (addr) => {
     setLoading(true);
     try {
-      const rows = await loadProgress(addr); // [{quest_id, xp}]
+      const rows = await loadProgress(addr);
       setReadSet(new Set(rows.map((r) => r.quest_id)));
 
-      // Backfill XP for rows saved before the xp column was added (xp === 0).
-      // This fixes leaderboard totals for existing users without any manual step.
       const staleRows = rows.filter((r) => !r.xp);
       if (staleRows.length > 0) {
         const xpMap = Object.fromEntries(
           WEEKS.flatMap((w) => w.sections.flatMap((s) => s.quests)).map((q) => [q.id, q.xp])
         );
-        // Fire-and-forget; non-critical so we don't block the UI
         Promise.all(
           staleRows
             .filter((r) => xpMap[r.quest_id] > 0)
@@ -162,7 +223,7 @@ export default function App() {
       return new Set([...prev, questId]);
     });
     showToast(`+${xp} XP — quest marked as read!`);
-    setLbRefreshCount((n) => n + 1); // nudge leaderboard to refresh
+    setLbRefreshCount((n) => n + 1);
 
     if (isSigned && address) {
       try {
@@ -174,8 +235,12 @@ export default function App() {
     }
   }, [isSigned, address, showToast]);
 
-  // Stable references — only recompute when the selected week changes, not on
-  // every render (prevents ProgressSection thrashing on every markRead).
+  // ── Week change: reset showAll ────────────────────────────────────────────
+  const handleWeekChange = useCallback((weekId) => {
+    setSelectedWeekId(weekId);
+    setShowAll(false);
+  }, []);
+
   const weekQuests = useMemo(
     () => getWeekById(selectedWeekId).sections.flatMap((s) => s.quests),
     [selectedWeekId]
@@ -185,95 +250,118 @@ export default function App() {
     [weekQuests, readSet]
   );
 
+  // Top 3: first 3 quests from the flattened week list (already ordered by importance)
+  const TOP_N = 3;
+  const topQuests = useMemo(() => weekQuests.slice(0, TOP_N), [weekQuests]);
+
   return (
-    <div className="page">
-      {/* ── Header ── */}
-      <header className="site-header">
-        <div className="logo" aria-label="Arbitrum">
-          <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Outer hexagon — navy fill, sky blue stroke */}
-            <path d="M20 2L37.3 12V32L20 44L2.7 32V12L20 2Z" fill="#1B2559" stroke="#9DCCED" strokeWidth="1.5"/>
-            {/* Left slash */}
-            <path d="M11.5 33L18 14" stroke="rgba(255,255,255,0.55)" strokeWidth="2.2" strokeLinecap="round"/>
-            {/* Right slash / A shape */}
-            <path d="M14 35L21 13L28 35" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            {/* Crossbar — Electric Blue */}
-            <path d="M17 27H25" stroke="#12AAFF" strokeWidth="2.4" strokeLinecap="round"/>
-          </svg>
-        </div>
-        <div className="site-brand">
-          <div className="site-title">Arbitrum<span className="title-accent">DAO</span> Quest Board</div>
-          <div className="site-subtitle">Weekly Governance Digest</div>
-        </div>
+    <PassphraseGate>
+      <div className="page">
+        {/* ── Header ── */}
+        <header className="site-header">
+          <div className="logo" aria-label="Arbitrum">
+            <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L37.3 12V32L20 44L2.7 32V12L20 2Z" fill="#1B2559" stroke="#9DCCED" strokeWidth="1.5"/>
+              <path d="M11.5 33L18 14" stroke="rgba(255,255,255,0.55)" strokeWidth="2.2" strokeLinecap="round"/>
+              <path d="M14 35L21 13L28 35" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <path d="M17 27H25" stroke="#12AAFF" strokeWidth="2.4" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div className="site-brand">
+            <div className="site-title">Arbitrum<span className="title-accent">DAO</span> Quest Board</div>
+            <div className="site-subtitle">Weekly Governance Digest</div>
+          </div>
 
-        <WeekSelector
-          weeks={WEEKS}
-          currentWeekId={selectedWeekId}
-          onChange={setSelectedWeekId}
-        />
-
-        <WalletArea address={address} isSigned={isSigned} />
-      </header>
-
-      {/* ── Banners ── */}
-      {isConnected && !isSigned && (
-        <SignInBanner onSign={handleSignIn} loading={signing} />
-      )}
-      {!isSupabaseConfigured && (
-        <div className="local-only-notice">
-          💾 <strong>Local mode</strong> — progress is not saved across sessions.
-          Add Supabase credentials to <code>.env</code> to enable persistence.
-        </div>
-      )}
-
-      {/* ── Two-column content grid ── */}
-      <div className="content-grid">
-        {/* Left: quests */}
-        <div className="quest-col">
-          {loading ? (
-            <div className="loading-bar">Loading your progress…</div>
-          ) : (
-            <ProgressSection readSet={readSet} weekQuests={weekQuests} />
-          )}
-
-          {getWeekById(selectedWeekId).sections.map((section) => (
-            <div key={section.id}>
-              <div className="section-label">{section.label}</div>
-              <div className={section.id === 'other' ? 'sub-quest-list' : 'quest-list'}>
-                {section.quests.map((quest) =>
-                  quest.variant === 'sub' ? (
-                    <SubQuestCard
-                      key={quest.id}
-                      quest={quest}
-                      isRead={readSet.has(quest.id)}
-                      onMarkRead={markRead}
-                    />
-                  ) : (
-                    <QuestCard
-                      key={quest.id}
-                      quest={quest}
-                      isRead={readSet.has(quest.id)}
-                      onMarkRead={markRead}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-          ))}
-
-          <CompletionBanner show={allDone} />
-        </div>
-
-        {/* Right: leaderboard */}
-        <aside className="lb-sidebar">
-          <Leaderboard
-            currentAddress={address}
-            refreshTrigger={lbRefreshCount}
+          <WeekSelector
+            weeks={WEEKS}
+            currentWeekId={selectedWeekId}
+            onChange={handleWeekChange}
           />
-        </aside>
-      </div>
 
-      <Toast msg={toastMsg} isError={toastError} />
-    </div>
+          <WalletArea address={address} isSigned={isSigned} />
+        </header>
+
+        {/* ── Banners ── */}
+        {isConnected && !isSigned && (
+          <SignInBanner onSign={handleSignIn} loading={signing} />
+        )}
+        {!isSupabaseConfigured && (
+          <div className="local-only-notice">
+            💾 <strong>Local mode</strong> — progress is not saved across sessions.
+            Add Supabase credentials to <code>.env</code> to enable persistence.
+          </div>
+        )}
+
+        {/* ── Two-column content grid ── */}
+        <div className="content-grid">
+          {/* Left: quests */}
+          <div className="quest-col">
+            {loading ? (
+              <div className="loading-bar">Loading your progress…</div>
+            ) : (
+              <ProgressSection readSet={readSet} weekQuests={weekQuests} />
+            )}
+
+            {/* Top-3 / All toggle header */}
+            <div className="updates-header">
+              <span className="updates-title">
+                {showAll ? 'All Updates' : '✨ Top 3 This Week'}
+              </span>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setShowAll((v) => !v)}
+              >
+                {showAll
+                  ? '← Show less'
+                  : `All ${weekQuests.length} updates →`}
+              </button>
+            </div>
+
+            {showAll ? (
+              /* Full section-by-section view */
+              getWeekById(selectedWeekId).sections.map((section) => (
+                <div key={section.id}>
+                  <div className="section-label">{section.label}</div>
+                  <div className={section.id === 'other' ? 'sub-quest-list' : 'quest-list'}>
+                    {section.quests.map((quest) => (
+                      <QuestItem
+                        key={quest.id}
+                        quest={quest}
+                        isRead={readSet.has(quest.id)}
+                        onMarkRead={markRead}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              /* Top 3 flat view */
+              <div className="quest-list">
+                {topQuests.map((quest) => (
+                  <QuestItem
+                    key={quest.id}
+                    quest={quest}
+                    isRead={readSet.has(quest.id)}
+                    onMarkRead={markRead}
+                  />
+                ))}
+              </div>
+            )}
+
+            <CompletionBanner show={allDone} />
+          </div>
+
+          {/* Right: leaderboard */}
+          <aside className="lb-sidebar">
+            <Leaderboard
+              currentAddress={address}
+              refreshTrigger={lbRefreshCount}
+            />
+          </aside>
+        </div>
+
+        <Toast msg={toastMsg} isError={toastError} />
+      </div>
+    </PassphraseGate>
   );
 }
