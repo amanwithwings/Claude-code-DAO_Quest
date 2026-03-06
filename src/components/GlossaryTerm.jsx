@@ -1,37 +1,78 @@
-import { useState } from 'react';
-import { GLOSSARY }  from '../data/glossary';
+import { useState, useRef, useCallback } from 'react';
+import { createPortal }                  from 'react-dom';
+import { GLOSSARY }                      from '../data/glossary';
 
-// ── Tooltip component ─────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
+const TIP_W   = 248;   // tooltip width in px — must match CSS
+const MARGIN  = 10;    // minimum gap from viewport edges
+
+// ── Tooltip (rendered into document.body via portal) ──────────────────────────
+function Tooltip({ definition, anchorRect }) {
+  if (!anchorRect) return null;
+
+  const anchorCx = anchorRect.left + anchorRect.width / 2;
+
+  // Clamp tooltip left edge so it never overflows the viewport
+  const rawLeft = anchorCx - TIP_W / 2;
+  const left    = Math.max(MARGIN, Math.min(rawLeft, window.innerWidth - TIP_W - MARGIN));
+
+  // Arrow sits under the anchor centre, clamped within the tooltip box
+  const arrowLeft = Math.round(
+    Math.max(16, Math.min(anchorCx - left, TIP_W - 16))
+  );
+
+  // Show above if there's room (≥ 120 px), otherwise show below
+  const showAbove = anchorRect.top >= 120;
+
+  const style = {
+    left,
+    ...(showAbove
+      ? { bottom: Math.round(window.innerHeight - anchorRect.top + 8) }
+      : { top:    Math.round(anchorRect.bottom + 8) }),
+  };
+
+  return createPortal(
+    <div
+      className={`glossary-tooltip glossary-tooltip--${showAbove ? 'above' : 'below'}`}
+      style={style}
+      role="tooltip"
+    >
+      {definition}
+      <span className="glossary-arrow" style={{ left: arrowLeft }} />
+    </div>,
+    document.body
+  );
+}
+
+// ── Highlighted term span ─────────────────────────────────────────────────────
 function GlossaryTerm({ children, definition }) {
-  const [open, setOpen] = useState(false);
+  const [anchorRect, setAnchorRect] = useState(null);
+  const ref = useRef(null);
+
+  const show = useCallback(() => {
+    if (ref.current) setAnchorRect(ref.current.getBoundingClientRect());
+  }, []);
+  const hide = useCallback(() => setAnchorRect(null), []);
 
   return (
     <span
-      className={`glossary-term${open ? ' glossary-open' : ''}`}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-      // Toggle on tap for mobile
-      onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+      ref={ref}
+      className={`glossary-term${anchorRect ? ' glossary-open' : ''}`}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onClick={(e) => { e.stopPropagation(); anchorRect ? hide() : show(); }}
     >
       {children}
-      {open && (
-        <span className="glossary-tooltip" role="tooltip">
-          {definition}
-        </span>
-      )}
+      <Tooltip definition={definition} anchorRect={anchorRect} />
     </span>
   );
 }
 
 // ── Text annotation ───────────────────────────────────────────────────────────
-// Scans a plain string for glossary terms (case-insensitive, whole-word) and
-// returns a React node array with matching spans wrapped in <GlossaryTerm>.
-
 function escRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Build the pattern once (module-level) so it isn't recomputed each render.
 const _terms   = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 const _pattern = _terms.length
   ? new RegExp(`\\b(${_terms.map(escRegex).join('|')})\\b`, 'gi')
@@ -44,16 +85,14 @@ export function annotate(text) {
   let last  = 0;
   let match;
 
-  // Reset lastIndex for reuse
   _pattern.lastIndex = 0;
 
   while ((match = _pattern.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
 
     const term = match[0];
-    const def  = GLOSSARY[term.toLowerCase()];
     parts.push(
-      <GlossaryTerm key={match.index} definition={def}>
+      <GlossaryTerm key={match.index} definition={GLOSSARY[term.toLowerCase()]}>
         {term}
       </GlossaryTerm>
     );
