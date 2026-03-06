@@ -25,8 +25,10 @@ function NameEditor({ currentName, onSave, onCancel }) {
           if (e.key === 'Escape') onCancel();
         }}
       />
-      <button className="btn btn-success btn-sm" onClick={() => onSave(value.trim())}>Save</button>
-      <button className="btn btn-ghost btn-sm"   onClick={onCancel}>✕</button>
+      <div className="name-editor-actions">
+        <button className="btn btn-success btn-sm" onClick={() => onSave(value.trim())}>Save</button>
+        <button className="btn btn-ghost btn-sm"   onClick={onCancel}>✕</button>
+      </div>
     </div>
   );
 }
@@ -143,8 +145,7 @@ export function Leaderboard({ currentAddress, refreshTrigger }) {
         {entries.map((entry, i) => {
           const isMe = entry.wallet_address === myAddr;
           return editing && isMe ? (
-            <div key={entry.wallet_address} className="lb-row lb-row-me">
-              <span className="lb-rank">{i <= 2 ? MEDALS[i] : `#${i+1}`}</span>
+            <div key={entry.wallet_address} className="lb-row lb-row-me lb-editing">
               <NameEditor
                 currentName={entry.display_name}
                 onSave={handleSaveName}
@@ -176,8 +177,7 @@ export function Leaderboard({ currentAddress, refreshTrigger }) {
               <span className="lb-xp">0 <span className="lb-xp-label">XP</span></span>
             </div>
             {editing && (
-              <div className="lb-row">
-                <span className="lb-rank" />
+              <div className="lb-row lb-editing">
                 <NameEditor onSave={handleSaveName} onCancel={() => setEditing(false)} />
               </div>
             )}

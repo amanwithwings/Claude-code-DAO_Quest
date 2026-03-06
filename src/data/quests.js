@@ -4,6 +4,197 @@
 // by default. Quest IDs must be unique across all weeks.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── Week of Feb 16, 2026 ──────────────────────────────────────────────────────
+const SECTIONS_FEB_16_2026 = [
+  // ── Governance ────────────────────────────────────────────────────────────
+  {
+    id:    'governance',
+    label: '🏛️ Governance',
+    quests: [
+      {
+        id:            'dvp-quorum-tempcheck',
+        xp:            30,
+        variant:       'main',
+        icon:          '✅',
+        iconBg:        'rgba(15,169,110,0.12)',
+        category:      'Temp Check Result',
+        categoryColor: 'var(--green)',
+        title:         'DVP Quorum Temperature Check Passes With Near-Unanimous Support',
+        badges:        [{ type: 'new', label: 'Passed' }],
+        description:
+          'The DVP Quorum temperature check passed with near-unanimous support. ' +
+          'The proposal will proceed to an onchain constitutional vote, bundled with the ' +
+          'proposal cancellation update. If implemented, ArbitrumDAO\'s quorum computation ' +
+          'logic will be based on delegated votable tokens.',
+        details: [
+          'Final tally: ✅ 211m ARB for | ❌ 3.6m ARB against',
+          'Proceeds to onchain vote next week, bundled with the proposal cancellation upgrade',
+          'Upgrade makes quorum computation based on delegated votable tokens — more accurate and fair',
+        ],
+        stats: [
+          { type: 'vote-for',     label: 'For: 211m ARB' },
+          { type: 'vote-against', label: 'Against: 3.6m ARB' },
+        ],
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x3ac48360cb2cf6f921e391a97416a53c8ca442e3a621a9f7bb406719a8f8034d',
+          label: '📊 View Snapshot Result',
+        },
+      },
+    ],
+  },
+
+  // ── Program Reports ───────────────────────────────────────────────────────
+  {
+    id:    'reports',
+    label: '📊 Program Reports',
+    quests: [
+      {
+        id:            'dao-grant-report10',
+        xp:            20,
+        variant:       'main',
+        icon:          '📋',
+        iconBg:        'rgba(18,170,255,0.12)',
+        category:      'Grant Program Report',
+        categoryColor: 'var(--arb-blue)',
+        title:         'D.A.O Grant Program Report #10 — Total Applications Cross 1,000',
+        badges:        [{ type: 'new', label: 'Report' }],
+        description:
+          'The tenth monthly report of the D.A.O. Grant Program (covering Jan 2 – Feb 1, 2026) ' +
+          'marks a milestone: total applications received have now crossed 1,000. ' +
+          '109 new applications were received this month, with 49 milestone payments totalling $273K processed.',
+        details: [
+          '109 new applications this month; 49 milestone payments totalling $273K',
+          'Applications focused on Consumer Apps, DeFi, and Developer Tooling',
+          'Assets remaining: $2.7M USDC | Total Allocated: $4.0M USDC',
+          'Total Disbursed: $1.9M USDC | Pending Disbursement: $2.1M USDC',
+        ],
+        link: {
+          href:  'https://arbitrumdaogrants.notion.site/January-2026-D-A-O-Grant-Monthly-Report-303247759efb8137b8c4dcda1204697b',
+          label: '📋 Read Full Report',
+        },
+      },
+      {
+        id:            'drip-jan-update',
+        xp:            20,
+        variant:       'main',
+        icon:          '💧',
+        iconBg:        'rgba(157,204,237,0.18)',
+        category:      'Incentive Program Report',
+        categoryColor: 'var(--arb-sky)',
+        title:         'DRIP January 2026 Update — Season 1 to Conclude at 16.705M ARB Total Spend',
+        badges:        [{ type: 'new', label: 'Report' }],
+        description:
+          'The DRIP (DeFi Incentives Program) January report covers Jan 1–31, 2026 ' +
+          '(epochs 9–11). Season 1 is on track to conclude with a total spend of 16.705M ARB. ' +
+          'Morpho stood out as the only protocol to grow market size (+17.1%), while most others contracted.',
+        details: [
+          'Epoch 10: 1.075M ARB distributed | Epoch 11: 695K ARB distributed',
+          'Morpho: only protocol to grow — market size +17.1% (+$60M)',
+          'Notable contractions: Euler -40.5%, Aave -18.4%, Fluid -10.4%',
+          'Season 1 final projected spend: 16.705M ARB',
+        ],
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/drip-january-2025-update/30546',
+          label: '📄 Read Forum Report',
+        },
+      },
+    ],
+  },
+
+  // ── Other Updates ──────────────────────────────────────────────────────────
+  {
+    id:    'other',
+    label: '📰 Other Updates',
+    quests: [
+      {
+        id:      'watchdog-feb10',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🛡️',
+        title:   'Watchdog Program: February 10th Update',
+        description:
+          '11 new reports received (42 → 49 unique cases total). In January, 7 investigations ' +
+          'completed: 5 valid misuse cases, 2 not valid. All-time: 33 investigations completed, ' +
+          '24 misuse confirmed, 9 not valid.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/watchdog-program-february-10th-update/30548',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'stylus-sprint-feb16',
+        xp:      10,
+        variant: 'sub',
+        icon:    '⚙️',
+        title:   'Stylus Sprint: January Milestones & 2nd Demo Day Scheduled (Mar 5)',
+        description:
+          'In January, 3 milestones submitted; 407,667 ARB in payments processed. ' +
+          'Total disbursed to date: 5,173,036 ARB (~57.5% of the 9M ARB budget). ' +
+          '2nd Stylus Demo Day scheduled for Thursday, March 5th, 2:30–3:30 PM UTC.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/stylus-sprint-program-updates/28790/10',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'entropy-monthly-jan26',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🏦',
+        title:   'Entropy Advisors Monthly Update — January 2026 (Treasury Management)',
+        description:
+          'Monthly report covering new OAT-approved deployments and strategies, ' +
+          'as well as upcoming reallocations across DAO treasury assets.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/entropy-advisors-monthly-update-january-2026/30549',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'opco-feb26',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🏢',
+        title:   'OpCo February 2026 Update — RAD, Firestarters & ArbiLodge at ETH Denver',
+        description:
+          'OpCo monthly update covering progress on the RAD delegate rewards program and ' +
+          'Firestarters grant program. OpCo also organised ArbiLodge at ETH Denver on Feb 19th.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/opco-february-2026-update/30558',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'agv-monthly-jan26',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🗺️',
+        title:   'AGV Monthly Update — January 2026',
+        description:
+          'Monthly update from the Arbitrum Grants Ventures (AGV) program covering ' +
+          'January 2026 activity, portfolio progress, and upcoming milestones.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/agv-monthly-update-january-2026/30488',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'grc-34-recording',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🎙️',
+        title:   '34th Governance Round-Table Call — Recording & Transcript Available',
+        description:
+          'The recording and full transcript from the 34th GRC call are now available on the forum.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/34th-grc-call-recording-transcript/30552?u=amanwithwings',
+          label: '🎙️ Watch / Read',
+        },
+      },
+    ],
+  },
+];
+
 // ── Week of Feb 24, 2026 ──────────────────────────────────────────────────────
 const SECTIONS_FEB_24_2026 = [
   // ── Active Votes ───────────────────────────────────────────────────────────
@@ -312,6 +503,12 @@ const SECTIONS_MAR_4_2026 = [
 // Add a new object here each week. Most-recent entry = default on load.
 
 export const WEEKS = [
+  {
+    id:         'week-2026-02-16',
+    label:      'Week of Feb 16, 2026',
+    shortLabel: 'Feb 16, 2026',
+    sections:   SECTIONS_FEB_16_2026,
+  },
   {
     id:         'week-2026-02-24',
     label:      'Week of Feb 24, 2026',
