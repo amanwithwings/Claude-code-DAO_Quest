@@ -1040,6 +1040,34 @@ body::before {
 .vote-status-warn  { color: var(--orange); background: rgba(224,122,0,0.08);  border: 1px solid rgba(224,122,0,0.28); }
 .vote-status-fail  { color: var(--red);    background: rgba(224,68,68,0.08);  border: 1px solid rgba(224,68,68,0.28); }
 
+.vote-bar-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.vote-live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.70rem;
+  color: var(--text-muted);
+}
+
+.vote-live-counts {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.vote-fetch-spinner {
+  display: inline-block;
+  animation: spin 0.9s linear infinite;
+  font-size: 0.8rem;
+  color: var(--arb-blue);
+}
+
 /* ── Leaderboard name editor (full-width row) ─────────────────────────────── */
 .lb-editing {
   padding: 10px 14px;

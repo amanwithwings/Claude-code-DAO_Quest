@@ -35,6 +35,10 @@ const SECTIONS_FEB_16_2026 = [
           { type: 'vote-for',     label: 'For: 211m ARB' },
           { type: 'vote-against', label: 'Against: 3.6m ARB' },
         ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0x3ac48360cb2cf6f921e391a97416a53c8ca442e3a621a9f7bb406719a8f8034d',
+        },
         link: {
           href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x3ac48360cb2cf6f921e391a97416a53c8ca442e3a621a9f7bb406719a8f8034d',
           label: '📊 View Snapshot Result',
@@ -362,6 +366,11 @@ const SECTIONS_MAR_4_2026 = [
           { type: 'vote-against', label: 'Against: 336k ARB' },
           { type: 'vote-quorum',  label: 'Quorum needed: 218.85m ARB' },
         ],
+        proposal: {
+          source:     'tally',
+          id:         '112177996398925212273579485756315626637025938627124330171390356044681347897430',
+          governorId: 'eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
+        },
         link: {
           href:  'https://www.tally.xyz/gov/arbitrum/proposal/112177996398925212273579485756315626637025938627124330171390356044681347897430?govId=eip155:42161:0xf07DeD9dC292157749B6Fd268E37DF6EA38395B9',
           label: '🗳️ Vote on Tally',
