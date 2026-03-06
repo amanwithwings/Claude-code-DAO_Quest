@@ -195,7 +195,7 @@ export function QuestCard({ quest, isRead, onMarkRead }) {
             <>
               <VoteBar stats={quest.stats} liveVotes={liveVotes} fetching={fetching} />
               {/* Static stat chips shown only when no live data */}
-              {!liveVotes && (
+              {!liveVotes && hasStats && (
                 <div className="stats-row">
                   {quest.stats.map((s) => (
                     <StatChip key={s.type} type={s.type} label={s.label} />
