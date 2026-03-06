@@ -75,7 +75,8 @@ function VoteBar({ stats, liveVotes, fetching }) {
   const againstPct = Math.min((againstAmt / total) * 100, 100);
   const quorumPct  = quorumAmt ? Math.min((quorumAmt / total) * 100, 100) : null;
 
-  const quorumMet = !quorumAmt || forAmt >= quorumAmt;
+  const hasQuorum  = quorumAmt > 0;
+  const quorumMet  = hasQuorum && forAmt >= quorumAmt;
   const isPassing = forAmt > againstAmt;
   const isClosed  = liveVotes?.status === 'closed' || liveVotes?.status === 'executed'
                  || liveVotes?.status === 'defeated' || liveVotes?.status === 'succeeded';
@@ -84,9 +85,10 @@ function VoteBar({ stats, liveVotes, fetching }) {
   if (isClosed) {
     if (isPassing) { statusLabel = '✅ Passed';   statusCls = 'vote-status-pass'; }
     else           { statusLabel = '❌ Defeated'; statusCls = 'vote-status-fail'; }
-  } else if (quorumMet && isPassing)       { statusLabel = '✅ Passing · Quorum met';   statusCls = 'vote-status-pass'; }
-  else if (isPassing && !quorumMet) { statusLabel = '⚠️ Passing · Below quorum'; statusCls = 'vote-status-warn'; }
-  else                              { statusLabel = '❌ Failing';                 statusCls = 'vote-status-fail'; }
+  } else if (hasQuorum && quorumMet && isPassing)  { statusLabel = '✅ Passing · Quorum met';   statusCls = 'vote-status-pass'; }
+  else if (hasQuorum && !quorumMet && isPassing)   { statusLabel = '⚠️ Passing · Below quorum'; statusCls = 'vote-status-warn'; }
+  else if (!hasQuorum && isPassing)                { statusLabel = '✅ Passing';                 statusCls = 'vote-status-pass'; }
+  else                                             { statusLabel = '❌ Failing';                 statusCls = 'vote-status-fail'; }
 
   return (
     <div className="vote-bar-wrap">
