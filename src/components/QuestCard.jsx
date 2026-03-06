@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { fetchLiveVotes }              from '../lib/liveVotes';
+import { annotate }                    from './GlossaryTerm';
 
 // ── Live votes hook ───────────────────────────────────────────────────────────
 // Fetches once on mount, then every 2 min while the proposal is active.
@@ -185,11 +186,11 @@ export function QuestCard({ quest, isRead, onMarkRead }) {
 
       <div className="quest-body">
         <div className="quest-body-inner">
-          <p className="quest-description">{quest.description}</p>
+          <p className="quest-description">{annotate(quest.description)}</p>
 
           {quest.details?.length > 0 && (
             <ul className="quest-details">
-              {quest.details.map((d, i) => <li key={i}>{d}</li>)}
+              {quest.details.map((d, i) => <li key={i}>{annotate(d)}</li>)}
             </ul>
           )}
 
@@ -256,7 +257,7 @@ export function SubQuestCard({ quest, isRead, onMarkRead }) {
       </div>
 
       <div className="sub-quest-body">
-        <p className="sub-quest-desc">{quest.description}</p>
+        <p className="sub-quest-desc">{annotate(quest.description)}</p>
         <div className="sub-quest-actions">
           {quest.link && (
             <a
