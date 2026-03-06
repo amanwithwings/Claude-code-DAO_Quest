@@ -31,3 +31,25 @@ create policy "Allow all for now"
 -- ── Migration: add xp column if upgrading from v1 ────────────────────────────
 -- (safe to run again — IF NOT EXISTS / ADD COLUMN IF NOT EXISTS)
 alter table quest_progress add column if not exists xp integer not null default 0;
+
+-- ── Migration: tighten RLS — run on production once Netlify functions are live ──
+-- Reads stay open (leaderboard needs all wallets).
+-- Writes are now handled by netlify/functions/{save-progress,set-display-name}
+-- using the service-role key, which bypasses RLS entirely.
+-- The anon key (used by the browser client) is denied all writes.
+--
+-- WARNING: After applying this, local dev writes via direct Supabase calls
+-- will fail unless you run `netlify dev` (which starts the function server).
+-- Alternatively, keep a separate dev Supabase project with the permissive policy.
+
+drop policy if exists "Allow all for now" on quest_progress;
+drop policy if exists "Allow all for now" on profiles;
+
+create policy "Public read — quest_progress"
+  on quest_progress for select using (true);
+
+create policy "Public read — profiles"
+  on profiles for select using (true);
+
+-- No INSERT / UPDATE / DELETE policy for the anon role.
+-- Only the service-role key (used in Netlify functions) can write.

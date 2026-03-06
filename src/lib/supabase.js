@@ -41,8 +41,26 @@ export async function loadProgress(address) {
   return data ?? [];
 }
 
-export async function saveProgress(address, questId, xp = 0) {
+// authProof = { signature, message } captured at wallet sign-in time.
+// When present, writes go through the server-side verified endpoint so the
+// Supabase service-role key (not the anon key) performs the write — the anon
+// key is denied write access by RLS in production.
+export async function saveProgress(address, questId, xp = 0, authProof = null) {
   if (!isSupabaseConfigured) return;
+
+  if (authProof?.signature) {
+    const res = await fetch('/api/save-progress', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ address, questId, xp, ...authProof }),
+    });
+    if (!res.ok) throw new Error(`Failed to save progress: ${res.statusText}`);
+    return;
+  }
+
+  // Fallback: direct Supabase write.
+  // Works in local dev (where the Netlify function server isn't running).
+  // Blocked by RLS in production when RLS migration has been applied.
   const { error } = await supabase
     .from('quest_progress')
     .upsert({ wallet_address: address.toLowerCase(), quest_id: questId, xp });
@@ -80,8 +98,20 @@ export async function fetchLeaderboard() {
 
 // ── Profiles / display names ──────────────────────────────────────────────────
 
-export async function setDisplayName(address, displayName) {
+export async function setDisplayName(address, displayName, authProof = null) {
   if (!isSupabaseConfigured) return;
+
+  if (authProof?.signature) {
+    const res = await fetch('/api/set-display-name', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ address, displayName, ...authProof }),
+    });
+    if (!res.ok) throw new Error(`Failed to save display name: ${res.statusText}`);
+    return;
+  }
+
+  // Fallback: direct Supabase write (dev only — blocked by RLS in production).
   const { error } = await supabase
     .from('profiles')
     .upsert({ wallet_address: address.toLowerCase(), display_name: displayName });
