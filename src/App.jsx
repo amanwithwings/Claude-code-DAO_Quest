@@ -80,7 +80,7 @@ function SignInBanner({ onSign, loading }) {
 }
 
 // ── Header wallet area ────────────────────────────────────────────────────────
-function WalletArea({ address, isSigned }) {
+function WalletArea({ address, isSigned, syncing }) {
   return (
     <div className="wallet-area">
       <ConnectButton
@@ -91,7 +91,7 @@ function WalletArea({ address, isSigned }) {
       />
       {address && isSigned && (
         <div className="signed-badge" title={address}>
-          <span className="signed-dot" /> syncing
+          <span className="signed-dot" /> {syncing ? 'syncing…' : 'synced'}
         </div>
       )}
     </div>
@@ -315,7 +315,7 @@ export default function App() {
             onChange={handleWeekChange}
           />
 
-          <WalletArea address={address} isSigned={isSigned} />
+          <WalletArea address={address} isSigned={isSigned} syncing={loading} />
         </header>
 
         {/* ── Banners ── */}
