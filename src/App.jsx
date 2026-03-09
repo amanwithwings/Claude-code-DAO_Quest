@@ -188,12 +188,15 @@ export default function App() {
       return;
     }
     if (localStorage.getItem('dao_quest_wallet') === address.toLowerCase()) {
-      setIsSigned(true);
-      // Restore auth proof from sessionStorage (keyed per address so switching
-      // wallets never carries over the wrong signature)
+      // Restore auth proof from sessionStorage (cleared when tab closes).
+      // Only mark as signed if the proof survived — otherwise the sign-in
+      // banner must reappear so the user can re-sign and get a fresh proof.
       try {
         const stored = sessionStorage.getItem(`auth_proof_${address.toLowerCase()}`);
-        if (stored) setAuthProof(JSON.parse(stored));
+        if (stored) {
+          setAuthProof(JSON.parse(stored));
+          setIsSigned(true);
+        }
       } catch { /* ignore malformed data */ }
       fetchAndSetProgress(address);
     }
