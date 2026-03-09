@@ -80,7 +80,7 @@ function SignInBanner({ onSign, loading }) {
 }
 
 // ── Header wallet area ────────────────────────────────────────────────────────
-function WalletArea({ address, isSigned }) {
+function WalletArea({ address, isSigned, syncing }) {
   return (
     <div className="wallet-area">
       <ConnectButton
@@ -91,7 +91,7 @@ function WalletArea({ address, isSigned }) {
       />
       {address && isSigned && (
         <div className="signed-badge" title={address}>
-          <span className="signed-dot" /> syncing
+          <span className="signed-dot" /> {syncing ? 'syncing…' : 'synced'}
         </div>
       )}
     </div>
@@ -188,12 +188,15 @@ export default function App() {
       return;
     }
     if (localStorage.getItem('dao_quest_wallet') === address.toLowerCase()) {
-      setIsSigned(true);
-      // Restore auth proof from sessionStorage (keyed per address so switching
-      // wallets never carries over the wrong signature)
+      // Restore auth proof from sessionStorage (cleared when tab closes).
+      // Only mark as signed if the proof survived — otherwise the sign-in
+      // banner must reappear so the user can re-sign and get a fresh proof.
       try {
         const stored = sessionStorage.getItem(`auth_proof_${address.toLowerCase()}`);
-        if (stored) setAuthProof(JSON.parse(stored));
+        if (stored) {
+          setAuthProof(JSON.parse(stored));
+          setIsSigned(true);
+        }
       } catch { /* ignore malformed data */ }
       fetchAndSetProgress(address);
     }
@@ -205,7 +208,7 @@ export default function App() {
     const message =
       `Welcome to ArbitrumDAO Quest Board!\n\n` +
       `Sign this free message to verify wallet ownership and sync your reading progress.\n\n` +
-      `No transaction will be sent.\n\nAddress: ${address}`;
+      `No transaction will be sent.\n\nAddress: ${address}\nTimestamp: ${Date.now()}`;
     try {
       setSigning(true);
       const signature = await signMessageAsync({ message });
@@ -241,8 +244,19 @@ export default function App() {
       try {
         await saveProgress(address, questId, xp, authProof);
       } catch (err) {
-        console.error(err);
-        showToast('Saved locally but failed to sync — check your connection.', true);
+        if (err.sessionExpired) {
+          // Proof is stale (pre-timestamp or >5 min old). Reset auth so the
+          // sign-in banner reappears — user re-signs with one click.
+          // Also un-mark the quest so it can be re-read and synced after re-signing.
+          setReadSet((prev) => { const next = new Set(prev); next.delete(questId); return next; });
+          setIsSigned(false);
+          setAuthProof(null);
+          sessionStorage.removeItem(`auth_proof_${address.toLowerCase()}`);
+          showToast('Session expired — please sign in again.', true);
+        } else {
+          console.error(err);
+          showToast('Saved locally but failed to sync — check your connection.', true);
+        }
       }
     }
   }, [isSigned, address, showToast, authProof]);
@@ -297,7 +311,7 @@ export default function App() {
             onChange={handleWeekChange}
           />
 
-          <WalletArea address={address} isSigned={isSigned} />
+          <WalletArea address={address} isSigned={isSigned} syncing={loading} />
         </header>
 
         {/* ── Banners ── */}

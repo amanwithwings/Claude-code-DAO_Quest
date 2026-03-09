@@ -33,6 +33,12 @@ export default async function handler(req, res) {
     return res.status(403).send('Signature does not match address');
   }
 
+  // Reject signatures older than 5 minutes to prevent replay attacks
+  const tsMatch = message.match(/Timestamp:\s*(\d+)/);
+  if (!tsMatch || Date.now() - Number(tsMatch[1]) > 5 * 60 * 1000) {
+    return res.status(401).send('Signature expired — please sign in again');
+  }
+
   const { error } = await supabase
     .from('quest_progress')
     .upsert({ wallet_address: address.toLowerCase(), quest_id: questId, xp: xp ?? 0 });
