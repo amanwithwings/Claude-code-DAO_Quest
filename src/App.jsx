@@ -205,7 +205,7 @@ export default function App() {
     const message =
       `Welcome to ArbitrumDAO Quest Board!\n\n` +
       `Sign this free message to verify wallet ownership and sync your reading progress.\n\n` +
-      `No transaction will be sent.\n\nAddress: ${address}`;
+      `No transaction will be sent.\n\nAddress: ${address}\nTimestamp: ${Date.now()}`;
     try {
       setSigning(true);
       const signature = await signMessageAsync({ message });
@@ -228,6 +228,13 @@ export default function App() {
     await fetchAndSetProgress(address);
   }, [address, signMessageAsync, fetchAndSetProgress, showToast]);
 
+  // Returns true when the stored proof's timestamp is within the 5-min server window.
+  const proofIsValid = useCallback((proof) => {
+    if (!proof?.message) return false;
+    const m = proof.message.match(/Timestamp:\s*(\d+)/);
+    return m ? Date.now() - Number(m[1]) < 4.5 * 60 * 1000 : false;
+  }, []);
+
   // ── Mark quest as read ────────────────────────────────────────────────────
   const markRead = useCallback(async (questId, xp) => {
     setReadSet((prev) => {
@@ -238,14 +245,25 @@ export default function App() {
     setLbRefreshCount((n) => n + 1);
 
     if (isSigned && address) {
+      // Re-sign silently if the proof has expired before attempting the save.
+      let proof = authProof;
+      if (!proofIsValid(proof)) {
+        await handleSignIn();
+        // handleSignIn updates authProof state asynchronously; read from
+        // sessionStorage directly so this call uses the fresh proof.
+        try {
+          const stored = sessionStorage.getItem(`auth_proof_${address.toLowerCase()}`);
+          if (stored) proof = JSON.parse(stored);
+        } catch { /* ignore */ }
+      }
       try {
-        await saveProgress(address, questId, xp, authProof);
+        await saveProgress(address, questId, xp, proof);
       } catch (err) {
         console.error(err);
         showToast('Saved locally but failed to sync — check your connection.', true);
       }
     }
-  }, [isSigned, address, showToast, authProof]);
+  }, [isSigned, address, showToast, authProof, proofIsValid, handleSignIn]);
 
   // ── Week change: reset showAll ────────────────────────────────────────────
   const handleWeekChange = useCallback((weekId) => {
