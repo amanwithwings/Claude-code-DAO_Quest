@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   // Verify that the signature was produced by `address`
   let recovered;
   try {
-    recovered = recoverAddress({ hash: hashMessage(message), signature });
+    recovered = await recoverAddress({ hash: hashMessage(message), signature });
   } catch {
     return res.status(400).send('Invalid signature format');
   }
