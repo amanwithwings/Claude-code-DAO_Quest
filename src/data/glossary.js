@@ -5,23 +5,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DEF = {
-  TEMP_CHECK:
-    'A preliminary offchain vote on Snapshot used to gauge delegate sentiment ' +
-    'before advancing to a formal onchain proposal. A passing temp check does not ' +
-    'bind the DAO.',
-
   ATMC:
     'Arbitrum Treasury Management Committee — the DAO-authorised body responsible ' +
     'for managing and deploying the DAO\'s non-ARB treasury capital under approved ' +
     'investment strategies.',
-
-  CONSTITUTIONAL_AIP:
-    'A proposal that modifies the ArbitrumDAO Constitution or core governance rules. ' +
-    'Requires constitutional quorum (~5% of votable ARB, currently ~219m ARB) to pass.',
-
-  NON_CONSTITUTIONAL:
-    'A standard governance proposal that does not modify the ArbitrumDAO Constitution. ' +
-    'Requires only the lower non-constitutional quorum threshold (~3% of votable ARB).',
 
   DVP:
     'Delegated Votable Power — the total amount of ARB tokens actively delegated to ' +
@@ -58,15 +45,6 @@ const DEF = {
     'the DAO\'s mission, empowered to take specific actions on behalf of the DAO ' +
     'within defined limits (e.g. Offchain Labs, Entropy Advisors).',
 
-  SNAPSHOT:
-    'The offchain voting platform used by ArbitrumDAO for temperature checks and ' +
-    'signal votes. Votes are weighted by ARB holdings/delegations but do not ' +
-    'directly execute onchain.',
-
-  TALLY:
-    'The onchain governance platform used for binding ArbitrumDAO votes. Proposals ' +
-    'that pass here are executed directly on Arbitrum.',
-
   OAT:
     'Oversight and Transparency Committee for OpCo — the committee responsible for ' +
     'overseeing the Arbitrum Foundation\'s operational company (OpCo) and ensuring ' +
@@ -78,22 +56,15 @@ const DEF = {
     'through elected domain allocators rather than a central committee.',
 
   AEP:
-    'Arbitrum Expansion Pack — a DAO-approved package of initiatives or incentives ' +
+    'Arbitrum Expansion Program — a DAO-approved package of initiatives or incentives ' +
     'that expands Arbitrum\'s ecosystem, often including protocol integrations, ' +
     'liquidity programmes, or chain-level partnerships.',
 };
 
 export const GLOSSARY = {
-  // Temperature check
-  'temperature check':                    DEF.TEMP_CHECK,
-
   // ATMC
   'atmc':                                 DEF.ATMC,
   'arbitrum treasury management committee': DEF.ATMC,
-
-  // Constitutional / non-constitutional
-  'constitutional aip':                   DEF.CONSTITUTIONAL_AIP,
-  'non-constitutional':                   DEF.NON_CONSTITUTIONAL,
 
   // DVP
   'dvp':                                  DEF.DVP,
@@ -118,10 +89,6 @@ export const GLOSSARY = {
   // AAE
   'aae':                                  DEF.AAE,
   'arbitrum aligned entity':              DEF.AAE,
-
-  // Platforms
-  'snapshot':                             DEF.SNAPSHOT,
-  'tally':                                DEF.TALLY,
 
   // OAT
   'oat':                                  DEF.OAT,
