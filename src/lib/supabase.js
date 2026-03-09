@@ -59,7 +59,7 @@ export async function saveProgress(address, questId, xp = 0, authProof = null) {
   }
 
   // Fallback: direct Supabase write.
-  // Works in local dev (where the Netlify function server isn't running).
+  // Works in local dev (where the Vercel function server isn't running).
   // Blocked by RLS in production when RLS migration has been applied.
   const { error } = await supabase
     .from('quest_progress')
