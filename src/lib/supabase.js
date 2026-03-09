@@ -54,6 +54,11 @@ export async function saveProgress(address, questId, xp = 0, authProof = null) {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ address, questId, xp, ...authProof }),
     });
+    if (res.status === 401) {
+      const err = new Error('Session expired');
+      err.sessionExpired = true;
+      throw err;
+    }
     if (!res.ok) throw new Error(`Failed to save progress: ${res.statusText}`);
     return;
   }

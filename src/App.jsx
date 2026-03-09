@@ -228,13 +228,6 @@ export default function App() {
     await fetchAndSetProgress(address);
   }, [address, signMessageAsync, fetchAndSetProgress, showToast]);
 
-  // Returns true when the stored proof's timestamp is within the 5-min server window.
-  const proofIsValid = useCallback((proof) => {
-    if (!proof?.message) return false;
-    const m = proof.message.match(/Timestamp:\s*(\d+)/);
-    return m ? Date.now() - Number(m[1]) < 4.5 * 60 * 1000 : false;
-  }, []);
-
   // ── Mark quest as read ────────────────────────────────────────────────────
   const markRead = useCallback(async (questId, xp) => {
     setReadSet((prev) => {
@@ -245,25 +238,23 @@ export default function App() {
     setLbRefreshCount((n) => n + 1);
 
     if (isSigned && address) {
-      // Re-sign silently if the proof has expired before attempting the save.
-      let proof = authProof;
-      if (!proofIsValid(proof)) {
-        await handleSignIn();
-        // handleSignIn updates authProof state asynchronously; read from
-        // sessionStorage directly so this call uses the fresh proof.
-        try {
-          const stored = sessionStorage.getItem(`auth_proof_${address.toLowerCase()}`);
-          if (stored) proof = JSON.parse(stored);
-        } catch { /* ignore */ }
-      }
       try {
-        await saveProgress(address, questId, xp, proof);
+        await saveProgress(address, questId, xp, authProof);
       } catch (err) {
-        console.error(err);
-        showToast('Saved locally but failed to sync — check your connection.', true);
+        if (err.sessionExpired) {
+          // Proof is stale (pre-timestamp or >5 min old). Reset auth so the
+          // sign-in banner reappears — user re-signs with one click.
+          setIsSigned(false);
+          setAuthProof(null);
+          sessionStorage.removeItem(`auth_proof_${address.toLowerCase()}`);
+          showToast('Session expired — please sign in again.', true);
+        } else {
+          console.error(err);
+          showToast('Saved locally but failed to sync — check your connection.', true);
+        }
       }
     }
-  }, [isSigned, address, showToast, authProof, proofIsValid, handleSignIn]);
+  }, [isSigned, address, showToast, authProof]);
 
   // ── Week change: reset showAll ────────────────────────────────────────────
   const handleWeekChange = useCallback((weekId) => {
