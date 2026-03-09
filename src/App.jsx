@@ -247,6 +247,8 @@ export default function App() {
         if (err.sessionExpired) {
           // Proof is stale (pre-timestamp or >5 min old). Reset auth so the
           // sign-in banner reappears — user re-signs with one click.
+          // Also un-mark the quest so it can be re-read and synced after re-signing.
+          setReadSet((prev) => { const next = new Set(prev); next.delete(questId); return next; });
           setIsSigned(false);
           setAuthProof(null);
           sessionStorage.removeItem(`auth_proof_${address.toLowerCase()}`);
