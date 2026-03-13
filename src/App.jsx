@@ -317,7 +317,7 @@ export default function App() {
             rel="noopener noreferrer"
             className="btn btn-outline btn-sm proposals-link"
           >
-            View Proposals ↗
+            Onchain Proposals ↗
           </a>
 
           <WalletArea address={address} isSigned={isSigned} syncing={loading} />
