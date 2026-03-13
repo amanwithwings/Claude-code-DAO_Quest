@@ -640,6 +640,8 @@ body::before {
 .btn-ghost             { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-ghost:hover       { color: var(--arb-navy); border-color: var(--arb-sky); }
 
+.proposals-link        { white-space: nowrap; text-decoration: none; flex-shrink: 0; }
+
 /* ── Sub-quest card ───────────────────────────────────────────────────────── */
 .sub-quest-card {
   background: var(--bg-card);
