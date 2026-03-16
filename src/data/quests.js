@@ -390,7 +390,6 @@ const SECTIONS_MAR_13_2026 = [
           'ARB tokens explicitly excluded — applies to non-ARB capital only',
           'Each ATMC deployment of consolidated funds still requires separate OAT approval',
           'DAO retains full clawback rights via a Snapshot vote at any time',
-          'Next step: formal onchain proposal',
         ],
         proposal: {
           source: 'snapshot',
@@ -425,7 +424,8 @@ const SECTIONS_MAR_13_2026 = [
           'the conclusion is that the OAT term started in August 2025 — ending August 2026 — and ' +
           'the next election process begins in May 2026.',
         details: [
-          'OpCo proposal executed Feb 18, 2025; OAT elections concluded Apr 3, 2025; entity established May 2025; 5th member appointed Jun 2025',
+          'OpCo proposal executed Feb 18, 2025',
+          'OAT elections concluded Apr 3, 2025; entity established May 2025; 5th member appointed Jun 2025',
           'Three start-date interpretations yielded election windows of: Feb 2026 (past due), Mar 2026 (near), or May 2026',
           'Decision: Aug 2025 is the official OAT term start, aligned with OpCo\'s operational start date',
           'OAT term ends Aug 2026; re-election process begins May 2026 (3 months before term end, per proposal)',
@@ -443,22 +443,22 @@ const SECTIONS_MAR_13_2026 = [
         iconBg:        'rgba(248,81,73,0.08)',
         category:      'Governance Elections',
         categoryColor: 'var(--red)',
-        title:         'Security Council Elections — 8 Candidates, Phase Closes Mar 15',
+        title:         'Security Council Contender Submission is Live',
         badges:        [{ type: 'live', label: 'Ongoing' }],
         description:
-          'The March 2026 Security Council election is underway. The Call for Candidates phase ' +
-          'has received 8 candidates and closes March 15, when the Contender Submission ' +
-          '(application) phase begins. SC members hold emergency upgrade rights over Arbitrum\'s ' +
-          'core governance contracts.',
+          'The Contender Submission phase for the March 2026 Security Council election is now live. ' +
+          'Candidates must register onchain through the election portal to officially apply — ' +
+          'expressing interest on the forum alone does not count. 10 candidates have expressed ' +
+          'interest on the forum; 3 have officially registered onchain so far.',
         details: [
-          '8 candidates submitted in the Call for Candidates phase so far',
-          'Call for Candidates phase closes March 15, 2026',
-          'Contender Submission (application) phase opens March 15',
+          '3 candidates have officially applied via the election portal (registered onchain)',
+          '10 candidates have expressed interest on the forum — application is only official once registered onchain',
+          'Contender Submission phase closes March 22, 2026 at 12:00 UTC',
           'Security Council can execute emergency protocol upgrades via 9-of-12 multisig, bypassing a full DAO vote',
         ],
         link: {
-          href:  'https://forum.arbitrum.foundation/t/march-2026-security-council-election-call-for-candidates/30594',
-          label: '💬 View Call for Candidates',
+          href:  'https://www.tally.xyz/gov/arbitrum/council/security-council/election/5',
+          label: '🗳️ Visit Election Portal',
         },
       },
     ],
@@ -494,7 +494,9 @@ const SECTIONS_MAR_13_2026 = [
           'Arbitrum Gaming Ventures published Transparency Report #3 covering H2 2025. ' +
           'Key themes: expanded thesis into prediction markets and onchain consumer platforms, ' +
           'capital discipline amid ARB volatility, new leadership hires, and a new Council ' +
-          'member elected for the 2026 operating year.',
+          'member elected for the 2026 operating year. ' +
+          'Investment pipeline (H2 2025): 86 deals reviewed, 59 actively tracked, 1 completed (1.6% conversion). ' +
+          'Grants pipeline (H2 2025): 23 applications reviewed, 14 actively tracked, 1 completed (4% conversion).',
         link: {
           href:  'https://forum.arbitrum.foundation/t/agv-transparency-report-3-h2-2025/30640',
           label: '📄 Read Report',
