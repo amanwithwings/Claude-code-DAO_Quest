@@ -311,6 +311,15 @@ export default function App() {
             onChange={handleWeekChange}
           />
 
+          <a
+            href="https://proposals.arbitrumdao.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-outline btn-sm proposals-link"
+          >
+            Onchain Proposals ↗
+          </a>
+
           <WalletArea address={address} isSigned={isSigned} syncing={loading} />
         </header>
 
