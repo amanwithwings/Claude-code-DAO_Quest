@@ -522,6 +522,134 @@ const SECTIONS_MAR_13_2026 = [
   },
 ];
 
+// ── Week of Mar 23, 2026 ──────────────────────────────────────────────────────
+const SECTIONS_MAR_23_2026 = [
+  // ── Governance Elections ───────────────────────────────────────────────────
+  {
+    id:    'elections',
+    label: '🔐 Governance Elections',
+    quests: [
+      {
+        id:            'sc-nominee-selection-mar23',
+        xp:            30,
+        variant:       'main',
+        icon:          '🔐',
+        iconBg:        'rgba(248,81,73,0.08)',
+        category:      'Governance Elections',
+        categoryColor: 'var(--red)',
+        title:         'Security Council Elections: Nominee Selection is Underway',
+        badges:        [{ type: 'live', label: 'Active' }],
+        description:
+          '16 candidates have applied to the Nominee Selection phase of the March 2026 Security Council election. ' +
+          'Over the next 6 days, ARB token holders will vote for their preferred candidates. ' +
+          'Any candidate receiving at least 9.8m ARB votes will advance to the next phase.',
+        details: [
+          '16 candidates are in the Nominee Selection phase',
+          'Voting window: 6 days for ARB token holders to cast their votes',
+          'Threshold to advance: 9.8m ARB votes per candidate',
+          'OpCo has introduced a special budget to reward participation in SC elections: $40,000 total, $15,000 for the ongoing nomination phase',
+        ],
+        link: {
+          href:  'https://www.tally.xyz/gov/arbitrum/council/security-council/election/5/round-1',
+          label: '🗳️ Vote on Tally',
+        },
+      },
+    ],
+  },
+
+  // ── Forum Discussions ──────────────────────────────────────────────────────
+  {
+    id:    'forum',
+    label: '💬 Forum Discussions',
+    quests: [
+      {
+        id:            'coc-living-document-mar23',
+        xp:            25,
+        variant:       'main',
+        icon:          '📜',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Upcoming Proposal',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'Updating the Code of Conduct & DAO Procedures to Become Living Documents',
+        badges:        [{ type: 'new', label: 'Discussion' }],
+        description:
+          'This proposal transitions the Code of Conduct and DAO Procedures from a trial-based framework ' +
+          'to a living, persistent document maintained by the OpCo.',
+        details: [
+          'Introduces an optimistic amendment process',
+          'Optional shielded votes for elections',
+          'No constitutional inclusion — will be a standalone living document rather than a constitutional amendment',
+        ],
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/updating-the-code-of-conduct-dao-procedures-to-become-living-documents/30664',
+          label: '💬 View Forum Discussion',
+        },
+      },
+    ],
+  },
+
+  // ── Other Updates ──────────────────────────────────────────────────────────
+  {
+    id:    'other',
+    label: '📰 Other Updates',
+    quests: [
+      {
+        id:      'sc-elections-opco-budget',
+        xp:      10,
+        variant: 'sub',
+        icon:    '💰',
+        title:   'OpCo Special Budget for SC Election Participation',
+        description:
+          'OpCo has introduced a special budget to incentivize ARB holder participation in Security Council elections. ' +
+          '$40,000 total, with $15,000 allocated to the ongoing nomination phase.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/rad-special-budget-for-the-security-council-elections/30658',
+          label: '📄 Read Forum Post',
+        },
+      },
+      {
+        id:      'af-transparency-report-2025',
+        xp:      10,
+        variant: 'sub',
+        icon:    '📊',
+        title:   'Arbitrum Foundation 2025 Transparency Report',
+        description:
+          'The Arbitrum Foundation\'s 2025 Transparency Report is live on the governance forum.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/the-arbitrum-foundation-2025-transparency-report-the-year-of-institutional-adoption/30660',
+          label: '📄 Read Report',
+        },
+      },
+      {
+        id:      'kpk-treasury-jan-feb-26',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🏦',
+        title:   'January & February 2026 Treasury Management Update — karpatkey',
+        description:
+          'karpatkey published the January and February 2026 Treasury Management update.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/kpk-treasury-management-updates/30667',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'gov-call-mar17',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🎙️',
+        title:   'Open Discussion of Proposals — Governance Call Recording',
+        description:
+          'Recording from the March 17, 2026 Open Discussion of Proposals governance call is available.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/march-17-2026-open-discussion-of-proposals-governance-call/30659/2',
+          label: '▶️ Watch Recording',
+        },
+      },
+    ],
+  },
+];
+
 // ── Weeks registry ────────────────────────────────────────────────────────────
 // Add a new object here each week. Most-recent entry = default on load.
 
@@ -543,6 +671,12 @@ export const WEEKS = [
     label:      'Week of Mar 13, 2026',
     shortLabel: 'Mar 13, 2026',
     sections:   SECTIONS_MAR_13_2026,
+  },
+  {
+    id:         'week-2026-03-23',
+    label:      'Week of Mar 23, 2026',
+    shortLabel: 'Mar 23, 2026',
+    sections:   SECTIONS_MAR_23_2026,
   },
 ];
 
