@@ -650,6 +650,160 @@ const SECTIONS_MAR_23_2026 = [
   },
 ];
 
+// ── Week of Mar 30, 2026 ──────────────────────────────────────────────────────
+const SECTIONS_MAR_30_2026 = [
+  // ── Governance Elections ───────────────────────────────────────────────────
+  {
+    id:    'elections',
+    label: '🔐 Governance Elections',
+    quests: [
+      {
+        id:            'sc-compliance-phase-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '🔐',
+        iconBg:        'rgba(248,81,73,0.08)',
+        category:      'Governance Elections',
+        categoryColor: 'var(--red)',
+        title:         'Security Council Elections: 12 Nominees Advance to Compliance Phase',
+        badges:        [{ type: 'new', label: 'Update' }],
+        description:
+          'The Nominee Selection phase has concluded. 12 candidates received the required ' +
+          '9.8m ARB votes and advance to the next stage.',
+        details: [
+          '12 qualified nominees proceed from the Nominee Selection phase',
+          'Compliance phase is now underway — lasts 2 weeks',
+          'Member Election begins April 12, 2026',
+        ],
+        link: {
+          href:  'https://www.tally.xyz/gov/arbitrum/council/security-council/election/5/round-1',
+          label: '🗳️ View Qualified Nominees',
+        },
+      },
+    ],
+  },
+
+  // ── Active Votes ───────────────────────────────────────────────────────────
+  {
+    id:    'votes',
+    label: '🗳️ Active Votes',
+    quests: [
+      {
+        id:            'arbos60-tempcheck-mar30',
+        xp:            25,
+        variant:       'main',
+        icon:          '⚙️',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Temperature Check',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'Temp Check: Constitutional AIP — ArbOS 60 Elara',
+        badges:        [{ type: 'live', label: 'Active' }],
+        description:
+          'Constitutional AIP to upgrade Arbitrum One and Nova to ArbOS 60 Elara is now ' +
+          'live for a Snapshot temperature check.',
+        details: [
+          'Dynamic Pricing: a new multidimensional gas pricing algorithm',
+          'Stylus smart contract code size limit raised to 96 KB',
+          'Offchain Labs can adjust the minimum L2 base fee on Arbitrum One and Nova between 0.01 and 0.10 gwei',
+        ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0x04d6219c392f3f6187779f609d6cad21e3b3d6091809355ad12ba6bb39b55834',
+        },
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x04d6219c392f3f6187779f609d6cad21e3b3d6091809355ad12ba6bb39b55834',
+          label: '📊 Vote on Snapshot',
+        },
+      },
+      {
+        id:            'coc-tempcheck-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '📜',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Temperature Check',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'Temp Check: Code of Conduct & DAO Procedures as Living Documents',
+        badges:        [{ type: 'live', label: 'Active' }],
+        description:
+          'The proposal to transition the Code of Conduct and DAO Procedures from a ' +
+          'trial-based framework to a living, persistent document maintained by the OpCo ' +
+          'is now live for a Snapshot temperature check.',
+        details: [
+          'Introduces an optimistic amendment process',
+          'Optional shielded votes for elections',
+          'No constitutional inclusion — standalone living document',
+        ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0xf78c223115031090b918ea09fa585d340718a426a21eb1556d81d19892e10b39',
+        },
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0xf78c223115031090b918ea09fa585d340718a426a21eb1556d81d19892e10b39',
+          label: '📊 Vote on Snapshot',
+        },
+      },
+      {
+        id:            'audit-program-improvements-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '🔍',
+        iconBg:        'rgba(40,160,240,0.12)',
+        category:      'Upcoming Proposal',
+        categoryColor: 'var(--arb-blue)',
+        title:         'Improvements to the Arbitrum Audit Program',
+        badges:        [{ type: 'new', label: 'Upcoming' }],
+        description:
+          'Two operational enhancements proposed for the Arbitrum Audit Program.',
+        details: [
+          'Moves from a mandatory Arbitrum-exclusivity constraint to a flexible alignment framework',
+          'Introduces a pilot program offering AI-security scans to program participants',
+        ],
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/improvements-to-the-arbitrum-audit-program/30697',
+          label: '💬 View Forum Discussion',
+        },
+      },
+    ],
+  },
+
+  // ── Other Updates ──────────────────────────────────────────────────────────
+  {
+    id:    'other',
+    label: '📰 Other Updates',
+    quests: [
+      {
+        id:      'resolv-usr-exploit-update',
+        xp:      10,
+        variant: 'sub',
+        icon:    '⚠️',
+        title:   'ATMC Update: Resolv USR Unbacked Minting Exploit',
+        description:
+          'Entropy Advisors and Karpatkey published an update following the Resolv USR ' +
+          'unbacked minting exploit over the weekend.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/atm-council-updates/29627/15',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'boring-security-report',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🔒',
+        title:   '[Grantee Report] Boring Security: Free, Interactive, Web3 Security Education',
+        description:
+          'Final report from Boring Security, a Questbook Grants Program grantee delivering ' +
+          'free, interactive web3 security education.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/final-report-boring-security-free-interactive-web3-security-education/30703',
+          label: '📄 Read Report',
+        },
+      },
+    ],
+  },
+];
+
 // ── Weeks registry ────────────────────────────────────────────────────────────
 // Add a new object here each week. Most-recent entry = default on load.
 
@@ -677,6 +831,12 @@ export const WEEKS = [
     label:      'Week of Mar 23, 2026',
     shortLabel: 'Mar 23, 2026',
     sections:   SECTIONS_MAR_23_2026,
+  },
+  {
+    id:         'week-2026-03-30',
+    label:      'Week of Mar 30, 2026',
+    shortLabel: 'Mar 30, 2026',
+    sections:   SECTIONS_MAR_30_2026,
   },
 ];
 
