@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Quest content — edit this file each week to update the digest.
+// Quest content - edit this file each week to update the digest.
 // Add a new entry to WEEKS for each new week. The most recent entry is shown
 // by default. Quest IDs must be unique across all weeks.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -28,9 +28,9 @@ const SECTIONS_MAR_4_2026 = [
           '(2) the ability for a proposer to cancel their proposal during the 3-day pending period. ' +
           'Voting is open through March 12th.',
         details: [
-          'DVP Quorum: changes how quorum is computed — based on delegated votable tokens rather than total supply',
+          'DVP Quorum: changes how quorum is computed - based on delegated votable tokens rather than total supply',
           'Proposal cancellation: proposers can withdraw a proposal before the vote begins',
-          'Voting opened Thursday — closes March 12th',
+          'Voting opened Thursday - closes March 12th',
         ],
         stats: [
           { type: 'vote-for',     label: 'For: 56.55m ARB' },
@@ -72,7 +72,7 @@ const SECTIONS_MAR_4_2026 = [
           'and requiring separate offchain and onchain votes before redeployment.',
         details: [
           'Applies to unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
-          'ARB tokens are explicitly excluded — applies to other capital only',
+          'ARB tokens are explicitly excluded - applies to other capital only',
           'Each ATMC deployment of consolidated funds still requires separate OAT approval',
           'DAO retains clawback rights via Snapshot vote at any time',
           'Temperature check expected this week',
@@ -95,7 +95,7 @@ const SECTIONS_MAR_4_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '🎙️',
-        title:   'Open Discussion of Proposals — Governance Call',
+        title:   'Open Discussion of Proposals - Governance Call',
         badges:  [{ type: 'live', label: 'Today' }],
         description:
           'The regular open governance call is happening today. Delegates discuss active proposals and open items live.',
@@ -194,7 +194,7 @@ const SECTIONS_MAR_10_2026 = [
         iconBg:        'rgba(248,81,73,0.12)',
         category:      'On-Chain Vote',
         categoryColor: 'var(--red)',
-        title:         'DVP Quorum & Proposal Cancellation — Vote Closes Thursday',
+        title:         'DVP Quorum & Proposal Cancellation - Vote Closes Thursday',
         badges:        [{ type: 'live', label: 'Closes Mar 12' }],
         description:
           'The onchain constitutional vote for DVP Quorum & Proposal Cancellation is in its ' +
@@ -239,7 +239,7 @@ const SECTIONS_MAR_10_2026 = [
           'separate offchain and onchain votes before redeployment; this proposal would remove that step.',
         details: [
           'Covers unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
-          'ARB tokens are explicitly excluded — this applies to other capital only',
+          'ARB tokens are explicitly excluded - this applies to other capital only',
           'Each ATMC deployment of consolidated funds still requires separate OAT approval',
           'DAO retains full clawback rights via a Snapshot vote at any time',
           'Quorum: non-constitutional threshold (pre-DVP) applies to this vote',
@@ -273,14 +273,14 @@ const SECTIONS_MAR_10_2026 = [
         badges:        [{ type: 'new', label: 'Discussion' }],
         description:
           'Offchain Labs has proposed ArbOS 60 Elara, the next major upgrade to Arbitrum One and ' +
-          'Nova. The centrepiece is Dynamic Pricing — a first-of-its-kind multidimensional gas ' +
+          'Nova. The centrepiece is Dynamic Pricing - a first-of-its-kind multidimensional gas ' +
           'algorithm that tracks seven resource dimensions (compute, storage growth, storage access, ' +
           'calldata, etc.) and prices each independently. The upgrade also raises the Stylus smart ' +
           'contract size cap from 24 KB to 96 KB, and introduces a BaseFeeManager contract ' +
-          'delegating minimum base fee adjustments to OCL for two years — without requiring ' +
+          'delegating minimum base fee adjustments to OCL for two years - without requiring ' +
           'a full DAO vote each time.',
         details: [
-          'Dynamic Pricing: gas price reflects actual node resource bottlenecks — fairer costs, more sustainable capacity',
+          'Dynamic Pricing: gas price reflects actual node resource bottlenecks - fairer costs, more sustainable capacity',
           'Stylus code size 24 KB → 96 KB: unblocks larger Rust/WASM contracts and reduces SDK friction',
           'BaseFeeManager: OCL can adjust min L2 base fee between 0.01–0.10 gwei for 2 years, DAO retains clawback',
           'AltDA Layer API & compliance filtering included but intentionally disabled on Arbitrum One / Nova',
@@ -304,7 +304,7 @@ const SECTIONS_MAR_10_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '⚙️',
-        title:   'Stylus Sprint Demo Day #2 — Recording Available',
+        title:   'Stylus Sprint Demo Day #2 - Recording Available',
         description:
           'On March 5th, Entropy hosted the second Stylus Sprint Demo Day on behalf of the ' +
           'Stylus Sprint Committee. Four teams presented their work and progress from the past year. ' +
@@ -319,7 +319,7 @@ const SECTIONS_MAR_10_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '💧',
-        title:   'DRIP Update — Entropy Advisors Summary',
+        title:   'DRIP Update - Entropy Advisors Summary',
         description:
           'Entropy Advisors shared their latest DRIP (DeFi Incentives Program) summary. ' +
           'Check the thread for current epoch metrics, protocol performance, and season outlook.',
@@ -347,7 +347,7 @@ const SECTIONS_MAR_13_2026 = [
         iconBg:        'rgba(15,169,110,0.12)',
         category:      'On-Chain Vote',
         categoryColor: 'var(--green)',
-        title:         'DVP Quorum & Proposal Cancellation — Passed',
+        title:         'DVP Quorum & Proposal Cancellation - Passed',
         badges:        [{ type: 'new', label: 'Passed ✓' }],
         description:
           'The constitutional vote passed with near-unanimous delegate support and is now queued ' +
@@ -356,7 +356,7 @@ const SECTIONS_MAR_13_2026 = [
           'proposers to cancel their own proposal during the 3-day pending period.',
         details: [
           'DVP Quorum formula: min{450m ARB, max{0.5 × DVP, 150m ARB}} for constitutional proposals',
-          'Fixes the core problem: quorum no longer climbs endlessly with token supply — it tracks actual delegate engagement',
+          'Fixes the core problem: quorum no longer climbs endlessly with token supply - it tracks actual delegate engagement',
           'Proposal cancellation: proposers can withdraw before the voting period opens',
           'Vote closed March 12 with near-unanimous support; now queued for on-chain execution',
         ],
@@ -378,7 +378,7 @@ const SECTIONS_MAR_13_2026 = [
         iconBg:        'rgba(40,160,240,0.12)',
         category:      'Temperature Check',
         categoryColor: 'var(--arb-blue)',
-        title:         'ATMC — Automate Idle Fund Consolidation: Snapshot Passed',
+        title:         'ATMC - Automate Idle Fund Consolidation: Snapshot Passed',
         badges:        [{ type: 'new', label: 'Passed ✓' }],
         description:
           'Entropy Advisors\' proposal to automatically route surplus non-ARB capital from DAO ' +
@@ -387,7 +387,7 @@ const SECTIONS_MAR_13_2026 = [
           'each time idle funds need to be redeployed.',
         details: [
           'Covers unspent grant allocations, program surpluses, fee kickbacks, revenue share, and accrued AEP fees',
-          'ARB tokens explicitly excluded — applies to non-ARB capital only',
+          'ARB tokens explicitly excluded - applies to non-ARB capital only',
           'Each ATMC deployment of consolidated funds still requires separate OAT approval',
           'DAO retains full clawback rights via a Snapshot vote at any time',
         ],
@@ -416,12 +416,12 @@ const SECTIONS_MAR_13_2026 = [
         iconBg:        'rgba(99,102,241,0.12)',
         category:      'DAO Programs & Initiatives',
         categoryColor: 'var(--purple, #6366f1)',
-        title:         'OAT Term Clarified — Next Elections Start May 2026',
+        title:         'OAT Term Clarified - Next Elections Start May 2026',
         badges:        [{ type: 'new', label: 'Discussion' }],
         description:
           'OpCo published a clarification on the OAT (Oversight and Transparency) term length ' +
           'and next election timing. Three interpretations of the original proposal were considered; ' +
-          'the conclusion is that the OAT term started in August 2025 — ending August 2026 — and ' +
+          'the conclusion is that the OAT term started in August 2025 - ending August 2026 - and ' +
           'the next election process begins in May 2026.',
         details: [
           'OpCo proposal executed Feb 18, 2025',
@@ -447,12 +447,12 @@ const SECTIONS_MAR_13_2026 = [
         badges:        [{ type: 'live', label: 'Ongoing' }],
         description:
           'The Contender Submission phase for the March 2026 Security Council election is now live. ' +
-          'Candidates must register onchain through the election portal to officially apply — ' +
+          'Candidates must register onchain through the election portal to officially apply - ' +
           'expressing interest on the forum alone does not count. 10 candidates have expressed ' +
           'interest on the forum; 3 have officially registered onchain so far.',
         details: [
           '3 candidates have officially applied via the election portal (registered onchain)',
-          '10 candidates have expressed interest on the forum — application is only official once registered onchain',
+          '10 candidates have expressed interest on the forum - application is only official once registered onchain',
           'Contender Submission phase closes March 22, 2026 at 12:00 UTC',
           'Security Council can execute emergency protocol upgrades via 9-of-12 multisig, bypassing a full DAO vote',
         ],
@@ -507,7 +507,7 @@ const SECTIONS_MAR_13_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '📋',
-        title:   'CASP Feasibility Report — Consumer Apps Support Program',
+        title:   'CASP Feasibility Report - Consumer Apps Support Program',
         description:
           'Tempe Techie published the CASP feasibility report (Dec 2025 – Feb 2026), delivered ' +
           'as an OpCo Firestarter grant. Based on interviews with 17 consumer app founders, ' +
@@ -578,7 +578,7 @@ const SECTIONS_MAR_23_2026 = [
         details: [
           'Introduces an optimistic amendment process',
           'Optional shielded votes for elections',
-          'No constitutional inclusion — will be a standalone living document rather than a constitutional amendment',
+          'No constitutional inclusion - will be a standalone living document rather than a constitutional amendment',
         ],
         link: {
           href:  'https://forum.arbitrum.foundation/t/updating-the-code-of-conduct-dao-procedures-to-become-living-documents/30664',
@@ -625,7 +625,7 @@ const SECTIONS_MAR_23_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '🏦',
-        title:   'January & February 2026 Treasury Management Update — karpatkey',
+        title:   'January & February 2026 Treasury Management Update - karpatkey',
         description:
           'karpatkey published the January and February 2026 Treasury Management update.',
         link: {
@@ -638,12 +638,166 @@ const SECTIONS_MAR_23_2026 = [
         xp:      10,
         variant: 'sub',
         icon:    '🎙️',
-        title:   'Open Discussion of Proposals — Governance Call Recording',
+        title:   'Open Discussion of Proposals - Governance Call Recording',
         description:
           'Recording from the March 17, 2026 Open Discussion of Proposals governance call is available.',
         link: {
           href:  'https://forum.arbitrum.foundation/t/march-17-2026-open-discussion-of-proposals-governance-call/30659/2',
           label: '▶️ Watch Recording',
+        },
+      },
+    ],
+  },
+];
+
+// ── Week of Mar 30, 2026 ──────────────────────────────────────────────────────
+const SECTIONS_MAR_30_2026 = [
+  // ── Governance Elections ───────────────────────────────────────────────────
+  {
+    id:    'elections',
+    label: '🔐 Governance Elections',
+    quests: [
+      {
+        id:            'sc-compliance-phase-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '🔐',
+        iconBg:        'rgba(248,81,73,0.08)',
+        category:      'Governance Elections',
+        categoryColor: 'var(--red)',
+        title:         'Security Council Elections: 12 Nominees Advance to Compliance Phase',
+        badges:        [{ type: 'new', label: 'Update' }],
+        description:
+          'The Nominee Selection phase has concluded. 12 candidates received the required ' +
+          '9.8m ARB votes and advance to the next stage.',
+        details: [
+          '12 qualified nominees proceed from the Nominee Selection phase',
+          'Compliance phase is now underway - lasts 2 weeks',
+          'Member Election begins April 12, 2026',
+        ],
+        link: {
+          href:  'https://www.tally.xyz/gov/arbitrum/council/security-council/election/5/round-1',
+          label: '🗳️ View Qualified Nominees',
+        },
+      },
+    ],
+  },
+
+  // ── Active Votes ───────────────────────────────────────────────────────────
+  {
+    id:    'votes',
+    label: '🗳️ Active Votes',
+    quests: [
+      {
+        id:            'arbos60-tempcheck-mar30',
+        xp:            25,
+        variant:       'main',
+        icon:          '⚙️',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Temperature Check',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'Temp Check: Constitutional AIP - ArbOS 60 Elara',
+        badges:        [{ type: 'live', label: 'Active' }],
+        description:
+          'Constitutional AIP to upgrade Arbitrum One and Nova to ArbOS 60 Elara is now ' +
+          'live for a Snapshot temperature check.',
+        details: [
+          'Dynamic Pricing: a new multidimensional gas pricing algorithm',
+          'Stylus smart contract code size limit raised to 96 KB',
+          'Offchain Labs can adjust the minimum L2 base fee on Arbitrum One and Nova between 0.01 and 0.10 gwei',
+        ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0x04d6219c392f3f6187779f609d6cad21e3b3d6091809355ad12ba6bb39b55834',
+        },
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0x04d6219c392f3f6187779f609d6cad21e3b3d6091809355ad12ba6bb39b55834',
+          label: '📊 Vote on Snapshot',
+        },
+      },
+      {
+        id:            'coc-tempcheck-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '📜',
+        iconBg:        'rgba(99,102,241,0.12)',
+        category:      'Temperature Check',
+        categoryColor: 'var(--purple, #6366f1)',
+        title:         'Temp Check: Code of Conduct & DAO Procedures as Living Documents',
+        badges:        [{ type: 'live', label: 'Active' }],
+        description:
+          'The proposal to transition the Code of Conduct and DAO Procedures from a ' +
+          'trial-based framework to a living, persistent document maintained by the OpCo ' +
+          'is now live for a Snapshot temperature check.',
+        details: [
+          'Introduces an optimistic amendment process',
+          'Optional shielded votes for elections',
+          'No constitutional inclusion - standalone living document',
+        ],
+        proposal: {
+          source: 'snapshot',
+          id:     '0xf78c223115031090b918ea09fa585d340718a426a21eb1556d81d19892e10b39',
+        },
+        link: {
+          href:  'https://snapshot.box/#/s:arbitrumfoundation.eth/proposal/0xf78c223115031090b918ea09fa585d340718a426a21eb1556d81d19892e10b39',
+          label: '📊 Vote on Snapshot',
+        },
+      },
+      {
+        id:            'audit-program-improvements-mar30',
+        xp:            20,
+        variant:       'main',
+        icon:          '🔍',
+        iconBg:        'rgba(40,160,240,0.12)',
+        category:      'Upcoming Proposal',
+        categoryColor: 'var(--arb-blue)',
+        title:         'Improvements to the Arbitrum Audit Program',
+        badges:        [{ type: 'new', label: 'Upcoming' }],
+        description:
+          'Two operational enhancements proposed for the Arbitrum Audit Program.',
+        details: [
+          'Moves from a mandatory Arbitrum-exclusivity constraint to a flexible alignment framework',
+          'Introduces a pilot program offering AI-security scans to program participants',
+        ],
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/improvements-to-the-arbitrum-audit-program/30697',
+          label: '💬 View Forum Discussion',
+        },
+      },
+    ],
+  },
+
+  // ── Other Updates ──────────────────────────────────────────────────────────
+  {
+    id:    'other',
+    label: '📰 Other Updates',
+    quests: [
+      {
+        id:      'resolv-usr-exploit-update',
+        xp:      10,
+        variant: 'sub',
+        icon:    '⚠️',
+        title:   'ATMC Update: Resolv USR Unbacked Minting Exploit',
+        description:
+          'Entropy Advisors and Karpatkey published an update following the Resolv USR ' +
+          'unbacked minting exploit over the weekend.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/atm-council-updates/29627/15',
+          label: '📄 Read Update',
+        },
+      },
+      {
+        id:      'boring-security-report',
+        xp:      10,
+        variant: 'sub',
+        icon:    '🔒',
+        title:   '[Grantee Report] Boring Security: Free, Interactive, Web3 Security Education',
+        description:
+          'Final report from Boring Security, a Questbook Grants Program grantee delivering ' +
+          'free, interactive web3 security education.',
+        link: {
+          href:  'https://forum.arbitrum.foundation/t/final-report-boring-security-free-interactive-web3-security-education/30703',
+          label: '📄 Read Report',
         },
       },
     ],
@@ -677,6 +831,12 @@ export const WEEKS = [
     label:      'Week of Mar 23, 2026',
     shortLabel: 'Mar 23, 2026',
     sections:   SECTIONS_MAR_23_2026,
+  },
+  {
+    id:         'week-2026-03-30',
+    label:      'Week of Mar 30, 2026',
+    shortLabel: 'Mar 30, 2026',
+    sections:   SECTIONS_MAR_30_2026,
   },
 ];
 
